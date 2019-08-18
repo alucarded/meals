@@ -1,5 +1,6 @@
 package com.devpeer.calories.auth.user;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @Document
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class User implements UserDetails {
     @Id
     String id;
