@@ -1,6 +1,7 @@
 package com.devpeer.calories.api;
 
 import com.devpeer.calories.CaloriesApplication;
+import com.devpeer.calories.auth.CustomUserDetailsService;
 import com.devpeer.calories.auth.jwt.JwtTokenProvider;
 import com.devpeer.calories.auth.user.Role;
 import com.devpeer.calories.auth.user.User;
@@ -28,9 +29,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
-// TODO: provide security config instead of setting secure to false here
-@WebMvcTest(value = AuthRestController.class, secure = false)
-@ContextConfiguration(classes = {CaloriesApplication.class})
+@WebMvcTest(value = AuthRestController.class)
+@ContextConfiguration(classes = {CaloriesApplication.class, JwtTokenProvider.class, CustomUserDetailsService.class})
 public class AuthRestControllerTests {
     @Autowired
     private MockMvc mvc;
@@ -44,17 +44,15 @@ public class AuthRestControllerTests {
     @MockBean
     private UserRepository userRepository;
 
-    // TODO: test roles
-
     @Test
     public void givenUserToken_whenSignin_thenReturnJwtOrUnauthorized() throws Exception {
         User user = User.builder()
                 .username("user")
                 .password("password")
-                .roles(Collections.singletonList(Role.ROLE_USER))
+                .roles(Collections.singletonList(Role.USER))
                 .build();
         given(userRepository.findByUsername("user")).willReturn(Optional.of(user));
-        given(jwtTokenProvider.createToken("user", Collections.singletonList(Role.ROLE_USER))).willReturn("TOKEN");
+        given(jwtTokenProvider.createToken("user", Collections.singletonList(Role.USER))).willReturn("TOKEN");
 
         AuthenticationRequest authenticationRequest = new AuthenticationRequest("user", "password");
 

@@ -47,7 +47,7 @@ public class UserRestController {
         User user = User.builder()
                 .username(registrationForm.getUsername())
                 .password(registrationForm.getPassword())
-                .roles(Collections.singletonList(Role.ROLE_USER))
+                .roles(Collections.singletonList(Role.USER))
                 .build();
         return ResponseEntity.ok(UserMapper.from(userRepository.save(user)));
     }
