@@ -1,4 +1,4 @@
-package com.devpeer.calories.model;
+package com.devpeer.calories.auth.user;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

@@ -1,4 +1,4 @@
-package com.devpeer.calories.model.input;
+package com.devpeer.calories.api.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

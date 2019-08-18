@@ -5,7 +5,7 @@ import com.devpeer.calories.auth.user.Role;
 import com.devpeer.calories.auth.user.User;
 import com.devpeer.calories.auth.user.UserRepository;
 import com.devpeer.calories.core.Jackson;
-import com.devpeer.calories.model.input.RegistrationForm;
+import com.devpeer.calories.api.model.RegistrationForm;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

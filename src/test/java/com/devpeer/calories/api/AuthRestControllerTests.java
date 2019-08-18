@@ -6,7 +6,7 @@ import com.devpeer.calories.auth.user.Role;
 import com.devpeer.calories.auth.user.User;
 import com.devpeer.calories.auth.user.UserRepository;
 import com.devpeer.calories.core.Jackson;
-import com.devpeer.calories.model.input.AuthenticationRequest;
+import com.devpeer.calories.api.model.AuthenticationRequest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +43,8 @@ public class AuthRestControllerTests {
 
     @MockBean
     private UserRepository userRepository;
+
+    // TODO: test roles
 
     @Test
     public void givenUserToken_whenSignin_thenReturnJwtOrUnauthorized() throws Exception {

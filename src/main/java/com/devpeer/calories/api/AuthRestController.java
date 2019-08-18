@@ -2,7 +2,7 @@ package com.devpeer.calories.api;
 
 import com.devpeer.calories.auth.jwt.JwtTokenProvider;
 import com.devpeer.calories.auth.user.UserRepository;
-import com.devpeer.calories.model.input.AuthenticationRequest;
+import com.devpeer.calories.api.model.AuthenticationRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
