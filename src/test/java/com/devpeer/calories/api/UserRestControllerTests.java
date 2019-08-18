@@ -55,7 +55,7 @@ public class UserRestControllerTests {
     }
 
     @Test
-    @WithMockUser(roles = {"USER", "MANAGER"})
+    @WithMockUser(authorities = {"USER", "MANAGER"})
     public void givenUsers_whenGetUsers_thenReturnJsonArray() throws Exception {
         givenUsers();
 
@@ -75,7 +75,7 @@ public class UserRestControllerTests {
     }
 
     @Test
-    @WithMockUser(roles = {"USER", "MANAGER"})
+    @WithMockUser(authorities = {"USER", "MANAGER"})
     public void givenUser_whenGetUserById_thenReturnUserOrNotFound() throws Exception {
         User user = User.builder()
                 .id("123")
@@ -95,7 +95,7 @@ public class UserRestControllerTests {
     }
 
     @Test
-    @WithMockUser(roles = {"USER", "MANAGER"})
+    @WithMockUser(authorities = {"USER", "MANAGER"})
     public void givenRegistrationForm_whenRegisterUser_thenReturnUser() throws Exception {
         // TODO: password length and characters validation
         RegistrationForm registrationForm = new RegistrationForm("newuser1", "password");
@@ -114,7 +114,7 @@ public class UserRestControllerTests {
     }
 
     @Test
-    @WithMockUser(roles = {"USER", "MANAGER"})
+    @WithMockUser(authorities = {"USER", "MANAGER"})
     public void givenUser_whenUpsertUser_thenReturnUser() throws Exception {
         User user = User.builder()
                 .username("user1")
@@ -134,7 +134,7 @@ public class UserRestControllerTests {
     }
 
     @Test
-    @WithMockUser(roles = {"USER", "MANAGER"})
+    @WithMockUser(authorities = {"USER", "MANAGER"})
     public void givenUserId_whenDeleteUserById_thenReturnNoContent() throws Exception {
         mvc.perform(delete("/v1/users/123").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
