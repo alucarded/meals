@@ -1,10 +1,10 @@
 package com.devpeer.calories.api;
 
-import com.devpeer.calories.auth.user.Role;
-import com.devpeer.calories.auth.user.User;
-import com.devpeer.calories.auth.user.UserRepository;
-import com.devpeer.calories.auth.user.UserMapper;
 import com.devpeer.calories.api.model.RegistrationForm;
+import com.devpeer.calories.auth.user.Authority;
+import com.devpeer.calories.auth.user.User;
+import com.devpeer.calories.auth.user.UserMapper;
+import com.devpeer.calories.auth.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +12,9 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 @RestController
 @RequestMapping("/v1/users")
@@ -39,7 +41,13 @@ public class UserRestController {
 
     @GetMapping
     public ResponseEntity getAllUsers() {
-        return ResponseEntity.ok(userRepository.findAll());
+        Iterable<User> userIterable = userRepository.findAll();
+        List<User> users = new ArrayList<>();
+                userIterable.forEach(user -> {
+                    user.setPassword(null);
+                    users.add(user);
+                });
+        return ResponseEntity.ok(users);
     }
 
     @PostMapping
@@ -47,7 +55,7 @@ public class UserRestController {
         User user = User.builder()
                 .username(registrationForm.getUsername())
                 .password(registrationForm.getPassword())
-                .roles(Collections.singletonList(Role.USER))
+                .authorities(Collections.singletonList(Authority.USER))
                 .build();
         return ResponseEntity.ok(UserMapper.from(userRepository.save(user)));
     }

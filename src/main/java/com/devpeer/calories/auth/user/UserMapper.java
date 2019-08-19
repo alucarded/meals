@@ -14,7 +14,7 @@ public class UserMapper {
     public static Map<Object, Object> from(UserDetails user) {
         Map<Object, Object> model = new HashMap<>();
         model.put("username", user.getUsername());
-        model.put("roles", user.getAuthorities()
+        model.put("authorities", user.getAuthorities()
                 .stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList())

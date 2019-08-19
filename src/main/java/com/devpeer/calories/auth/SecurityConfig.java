@@ -2,7 +2,7 @@ package com.devpeer.calories.auth;
 
 import com.devpeer.calories.auth.jwt.JwtConfigurer;
 import com.devpeer.calories.auth.jwt.JwtTokenProvider;
-import com.devpeer.calories.auth.user.Role;
+import com.devpeer.calories.auth.user.Authority;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -49,9 +49,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/v1/auth/signin").permitAll()
-                .antMatchers(HttpMethod.GET, "/me").hasAuthority(Role.USER.toString())
+                .antMatchers(HttpMethod.GET, "/me").hasAuthority(Authority.USER.toString())
                 .antMatchers("/v1/users/**")
-                    .hasAnyAuthority(Role.ADMIN.toString(), Role.MANAGER.toString())
+                    .hasAnyAuthority(Authority.ADMIN.toString(), Authority.MANAGER.toString())
                 .anyRequest().authenticated()
                 .and()
                 .apply(new JwtConfigurer(jwtTokenProvider));

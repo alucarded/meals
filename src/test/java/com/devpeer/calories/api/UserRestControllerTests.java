@@ -4,7 +4,7 @@ import com.devpeer.calories.CaloriesApplication;
 import com.devpeer.calories.api.model.RegistrationForm;
 import com.devpeer.calories.auth.CustomUserDetailsService;
 import com.devpeer.calories.auth.jwt.JwtTokenProvider;
-import com.devpeer.calories.auth.user.Role;
+import com.devpeer.calories.auth.user.Authority;
 import com.devpeer.calories.auth.user.User;
 import com.devpeer.calories.auth.user.UserRepository;
 import com.devpeer.calories.core.Jackson;
@@ -45,30 +45,35 @@ public class UserRestControllerTests {
 
     private static final String TEST_USERNAME = "username";
 
-    private void givenUsers() {
-        User tom = new User();
-        tom.setUsername(TEST_USERNAME);
-
-        List<User> allUsers = Arrays.asList(tom);
-
-        given(userRepository.findAll()).willReturn(allUsers);
-    }
+    private static final User TEST_USER = User.builder()
+            .id("123")
+            .username(TEST_USERNAME)
+            .password("password")
+            .authorities(Collections.singletonList(Authority.USER))
+            .build();
 
     @Test
     @WithMockUser(authorities = {"USER", "MANAGER"})
     public void givenUsers_whenGetUsers_thenReturnJsonArray() throws Exception {
-        givenUsers();
+        List<User> allUsers = Arrays.asList(TEST_USER);
+
+        given(userRepository.findAll()).willReturn(allUsers);
 
         mvc.perform(get("/v1/users").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$", hasSize(1)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].username", is(TEST_USERNAME)));
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].username", is(TEST_USERNAME)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].password").doesNotExist())
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].authorities", hasSize(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].authorities[0]", is(Authority.USER.toString())));
     }
 
     @Test
     @WithMockUser
     public void givenNormalUser_whenGetUsers_thenReturnAccessDenied() throws Exception {
-        givenUsers();
+        List<User> allUsers = Arrays.asList(TEST_USER);
+
+        given(userRepository.findAll()).willReturn(allUsers);
 
         mvc.perform(get("/v1/users").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isForbidden());
@@ -77,18 +82,14 @@ public class UserRestControllerTests {
     @Test
     @WithMockUser(authorities = {"USER", "MANAGER"})
     public void givenUser_whenGetUserById_thenReturnUserOrNotFound() throws Exception {
-        User user = User.builder()
-                .id("123")
-                .username("tom")
-                .roles(Arrays.asList(Role.USER))
-                .build();
 
-        given(userRepository.findById(user.getId())).willReturn(Optional.of(user));
+        given(userRepository.findById(TEST_USER.getId())).willReturn(Optional.of(TEST_USER));
 
         mvc.perform(get("/v1/users/123").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.username", is(user.getUsername())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.roles[0]", is(Role.USER.toString())));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.username", is(TEST_USER.getUsername())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.password").doesNotExist())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.authorities[0]", is(Authority.USER.toString())));
 
         mvc.perform(get("/v1/users/456").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
@@ -103,33 +104,30 @@ public class UserRestControllerTests {
         given(userRepository.save(any())).willReturn(User.builder()
                 .username(registrationForm.getUsername())
                 .password(registrationForm.getPassword())
-                .roles(Collections.singletonList(Role.USER))
+                .authorities(Collections.singletonList(Authority.USER))
                 .build());
 
         mvc.perform(post("/v1/users").contentType(MediaType.APPLICATION_JSON).content(Jackson.toJsonUnsafe(registrationForm)))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.username", is(registrationForm.getUsername())))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.password").doesNotExist())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.roles[0]", is(Role.USER.toString())));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.authorities[0]", is(Authority.USER.toString())));
     }
 
     @Test
     @WithMockUser(authorities = {"USER", "MANAGER"})
     public void givenUser_whenUpsertUser_thenReturnUser() throws Exception {
-        User user = User.builder()
-                .username("user1")
-                .password("passwd1")
-                .build();
 
         User returnedUser = User.builder()
-                .username("user1")
+                .username(TEST_USERNAME)
+                .authorities(Collections.singletonList(Authority.USER))
                 .build();
 
-        given(userRepository.save(user)).willReturn(returnedUser);
+        given(userRepository.save(TEST_USER)).willReturn(returnedUser);
 
-        mvc.perform(put("/v1/users").contentType(MediaType.APPLICATION_JSON).content(Jackson.toJsonUnsafe(user)))
+        mvc.perform(put("/v1/users").contentType(MediaType.APPLICATION_JSON).content(Jackson.toJsonUnsafe(TEST_USER)))
                 .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.username", is(user.getUsername())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.username", is(TEST_USER.getUsername())))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.password").doesNotExist());
     }
 

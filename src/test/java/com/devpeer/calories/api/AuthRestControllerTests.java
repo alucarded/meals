@@ -3,7 +3,7 @@ package com.devpeer.calories.api;
 import com.devpeer.calories.CaloriesApplication;
 import com.devpeer.calories.auth.CustomUserDetailsService;
 import com.devpeer.calories.auth.jwt.JwtTokenProvider;
-import com.devpeer.calories.auth.user.Role;
+import com.devpeer.calories.auth.user.Authority;
 import com.devpeer.calories.auth.user.User;
 import com.devpeer.calories.auth.user.UserRepository;
 import com.devpeer.calories.core.Jackson;
@@ -49,10 +49,10 @@ public class AuthRestControllerTests {
         User user = User.builder()
                 .username("user")
                 .password("password")
-                .roles(Collections.singletonList(Role.USER))
+                .authorities(Collections.singletonList(Authority.USER))
                 .build();
         given(userRepository.findByUsername("user")).willReturn(Optional.of(user));
-        given(jwtTokenProvider.createToken("user", Collections.singletonList(Role.USER))).willReturn("TOKEN");
+        given(jwtTokenProvider.createToken("user", Collections.singletonList(Authority.USER))).willReturn("TOKEN");
 
         AuthenticationRequest authenticationRequest = new AuthenticationRequest("user", "password");
 

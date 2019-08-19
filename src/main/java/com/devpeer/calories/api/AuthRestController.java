@@ -49,7 +49,7 @@ public class AuthRestController {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(username, data.getPassword()));
             String token = jwtTokenProvider.createToken(username, userRepository.findByUsername(username)
-                    .orElseThrow(() -> new UsernameNotFoundException("Username " + username + "not found")).getRoles());
+                    .orElseThrow(() -> new UsernameNotFoundException("Username " + username + "not found")).getAuthorities());
             Map<Object, Object> model = new HashMap<>();
             model.put("username", username);
             model.put("token", token);

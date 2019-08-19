@@ -34,11 +34,11 @@ public class User implements UserDetails {
     // TODO: make sure it is hashed
     private String password;
     @Builder.Default
-    private List<Role> roles = new ArrayList<>();
+    private List<Authority> authorities = new ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.roles.stream().map(Enum::toString).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+        return authorities;
     }
 
     @Override
