@@ -49,6 +49,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/v1/auth/signin").permitAll()
+                .antMatchers(HttpMethod.POST,"/v1/users").permitAll()
                 .antMatchers(HttpMethod.GET, "/me").hasAuthority(Authority.USER.toString())
                 .antMatchers("/v1/users/**")
                     .hasAnyAuthority(Authority.ADMIN.toString(), Authority.MANAGER.toString())

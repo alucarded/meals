@@ -96,9 +96,9 @@ public class UserRestControllerTests {
     }
 
     @Test
-    @WithMockUser(authorities = {"USER", "MANAGER"})
     public void givenRegistrationForm_whenRegisterUser_thenReturnUser() throws Exception {
         // TODO: password length and characters validation
+        // TODO: prevent registered user from registering again ?
         RegistrationForm registrationForm = new RegistrationForm("newuser1", "password");
 
         given(userRepository.save(any())).willReturn(User.builder()
