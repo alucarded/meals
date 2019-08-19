@@ -50,9 +50,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/v1/auth/signin").permitAll()
                 .antMatchers(HttpMethod.POST,"/v1/users").permitAll()
-                .antMatchers(HttpMethod.GET, "/me").hasAuthority(Authority.USER.toString())
+                .antMatchers("/v1/users/me").hasAuthority(Authority.USER.name())
                 .antMatchers("/v1/users/**")
-                    .hasAnyAuthority(Authority.ADMIN.toString(), Authority.MANAGER.toString())
+                    .hasAnyAuthority(Authority.ADMIN.toString(), Authority.MANAGER.name())
                 .anyRequest().authenticated()
                 .and()
                 .apply(new JwtConfigurer(jwtTokenProvider));

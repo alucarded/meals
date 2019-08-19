@@ -44,6 +44,7 @@ public class AuthRestControllerTests {
     @MockBean
     private UserRepository userRepository;
 
+    // All users can sign-in
     @Test
     public void givenUserToken_whenSignin_thenReturnJwtOrUnauthorized() throws Exception {
         User user = User.builder()

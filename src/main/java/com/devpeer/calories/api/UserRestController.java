@@ -6,7 +6,6 @@ import com.devpeer.calories.auth.user.User;
 import com.devpeer.calories.auth.user.UserMapper;
 import com.devpeer.calories.auth.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,24 +28,31 @@ public class UserRestController {
 
     @GetMapping("/me")
     public ResponseEntity getCurrentUser(@AuthenticationPrincipal UserDetails userDetails) {
-        // TODO
-        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
+        return ResponseEntity.ok(UserMapper.from(userDetails));
+    }
+
+    @PutMapping("/me")
+    public ResponseEntity updateCurrentUser(@AuthenticationPrincipal UserDetails userDetails,
+                                            @RequestBody User user) {
+        // TODO: add field validations
+        user.setAuthorities(Collections.singletonList(Authority.USER));
+        return ResponseEntity.ok(userRepository.save(user));
     }
 
     @DeleteMapping("/me")
     public ResponseEntity deleteCurrentUser(@AuthenticationPrincipal UserDetails userDetails) {
-        // TODO
-        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
+        userRepository.deleteById(userDetails.getUsername());
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping
     public ResponseEntity getAllUsers() {
         Iterable<User> userIterable = userRepository.findAll();
         List<User> users = new ArrayList<>();
-                userIterable.forEach(user -> {
-                    user.setPassword(null);
-                    users.add(user);
-                });
+        userIterable.forEach(user -> {
+            user.setPassword(null);
+            users.add(user);
+        });
         return ResponseEntity.ok(users);
     }
 

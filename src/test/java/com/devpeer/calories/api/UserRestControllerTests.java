@@ -29,7 +29,9 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
@@ -46,7 +48,6 @@ public class UserRestControllerTests {
     private static final String TEST_USERNAME = "username";
 
     private static final User TEST_USER = User.builder()
-            .id("123")
             .username(TEST_USERNAME)
             .password("password")
             .authorities(Collections.singletonList(Authority.USER))
@@ -61,40 +62,53 @@ public class UserRestControllerTests {
 
         mvc.perform(get("/v1/users").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$", hasSize(1)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].username", is(TEST_USERNAME)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].password").doesNotExist())
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].authorities", hasSize(1)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].authorities[0]", is(Authority.USER.toString())));
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].username", is(TEST_USERNAME)))
+                .andExpect(jsonPath("$[0].password").doesNotExist())
+                .andExpect(jsonPath("$[0].authorities", hasSize(1)))
+                .andExpect(jsonPath("$[0].authorities[0]", is(Authority.USER.toString())));
     }
 
     @Test
     @WithMockUser
-    public void givenNormalUser_whenGetUsers_thenReturnAccessDenied() throws Exception {
+    public void givenUsers_whenGetUsers_thenReturnAccessDenied() throws Exception {
         List<User> allUsers = Arrays.asList(TEST_USER);
 
         given(userRepository.findAll()).willReturn(allUsers);
 
         mvc.perform(get("/v1/users").contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$").doesNotExist());
     }
 
     @Test
     @WithMockUser(authorities = {"USER", "MANAGER"})
-    public void givenUser_whenGetUserById_thenReturnUserOrNotFound() throws Exception {
+    public void givenUser_whenGetUserByUsername_thenReturnUserOrNotFound() throws Exception {
 
-        given(userRepository.findById(TEST_USER.getId())).willReturn(Optional.of(TEST_USER));
+        given(userRepository.findById(TEST_USER.getUsername())).willReturn(Optional.of(TEST_USER));
 
-        mvc.perform(get("/v1/users/123").contentType(MediaType.APPLICATION_JSON))
+        mvc.perform(get("/v1/users/" + TEST_USER.getUsername()).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.username", is(TEST_USER.getUsername())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.password").doesNotExist())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.authorities[0]", is(Authority.USER.toString())));
+                .andExpect(jsonPath("$.username", is(TEST_USER.getUsername())))
+                .andExpect(jsonPath("$.password").doesNotExist())
+                .andExpect(jsonPath("$.authorities[0]", is(Authority.USER.toString())));
 
-        mvc.perform(get("/v1/users/456").contentType(MediaType.APPLICATION_JSON))
+        mvc.perform(get("/v1/users/qwerty").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
 
+    @Test
+    @WithMockUser
+    public void givenUser_whenGetUserByUsername_thenReturnAccessDenied() throws Exception {
+
+        given(userRepository.findById(TEST_USER.getUsername())).willReturn(Optional.of(TEST_USER));
+
+        mvc.perform(get("/v1/users/123").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$").doesNotExist());
+    }
+
+    // All API users can register
     @Test
     public void givenRegistrationForm_whenRegisterUser_thenReturnUser() throws Exception {
         // TODO: password length and characters validation
@@ -109,9 +123,9 @@ public class UserRestControllerTests {
 
         mvc.perform(post("/v1/users").contentType(MediaType.APPLICATION_JSON).content(Jackson.toJsonUnsafe(registrationForm)))
                 .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.username", is(registrationForm.getUsername())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.password").doesNotExist())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.authorities[0]", is(Authority.USER.toString())));
+                .andExpect(jsonPath("$.username", is(registrationForm.getUsername())))
+                .andExpect(jsonPath("$.password").doesNotExist())
+                .andExpect(jsonPath("$.authorities[0]", is(Authority.USER.toString())));
     }
 
     @Test
@@ -127,8 +141,24 @@ public class UserRestControllerTests {
 
         mvc.perform(put("/v1/users").contentType(MediaType.APPLICATION_JSON).content(Jackson.toJsonUnsafe(TEST_USER)))
                 .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.username", is(TEST_USER.getUsername())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.password").doesNotExist());
+                .andExpect(jsonPath("$.username", is(TEST_USER.getUsername())))
+                .andExpect(jsonPath("$.password").doesNotExist());
+    }
+
+    @Test
+    @WithMockUser
+    public void givenUser_whenUpsertUser_thenReturnAccessDenied() throws Exception {
+
+        User returnedUser = User.builder()
+                .username(TEST_USERNAME)
+                .authorities(Collections.singletonList(Authority.USER))
+                .build();
+
+        given(userRepository.save(TEST_USER)).willReturn(returnedUser);
+
+        mvc.perform(put("/v1/users").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$").doesNotExist());
     }
 
     @Test
@@ -136,5 +166,74 @@ public class UserRestControllerTests {
     public void givenUserId_whenDeleteUserById_thenReturnNoContent() throws Exception {
         mvc.perform(delete("/v1/users/123").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
+    }
+
+    @Test
+    @WithMockUser
+    public void givenUserId_whenDeleteUserById_thenReturnAccessDenied() throws Exception {
+        mvc.perform(delete("/v1/users/123").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$").doesNotExist());
+    }
+
+
+    // ME
+
+    @Test
+    @WithMockUser(username = "username", authorities = {"USER"})
+    public void whenGetCurrentUser_thenReturnUserInfo() throws Exception {
+        mvc.perform(get("/v1/users/me").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.username", is("username")));
+    }
+
+    @Test
+    public void whenGetCurrentUser_thenReturnAccessDenied() throws Exception {
+        mvc.perform(get("/v1/users/me").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$").doesNotExist());
+    }
+
+    @Test
+    @WithMockUser(authorities = {"USER"})
+    public void givenUser_whenUpdateCurrentUser_thenReturnUpdatedUserInfo() throws Exception {
+
+        User updatedUser = TEST_USER;
+        // TODO: make sure user cant modify his ID, authorities
+        // TODO: should we allow username edit?
+        // TODO: integration tests for password change ?
+        updatedUser.setUsername("newusername");
+
+        given(userRepository.save(updatedUser)).willReturn(updatedUser);
+
+        mvc.perform(put("/v1/users/me").contentType(MediaType.APPLICATION_JSON).content(Jackson.toJsonUnsafe(updatedUser)))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.content().string(Jackson.toJsonUnsafe(updatedUser)));
+    }
+
+    @Test
+    public void givenUser_whenUpdateCurrentUser_thenReturnAccessDenied() throws Exception {
+
+        User updatedUser = TEST_USER;
+        given(userRepository.save(updatedUser)).willReturn(updatedUser);
+
+        mvc.perform(put("/v1/users/me").contentType(MediaType.APPLICATION_JSON).content(Jackson.toJsonUnsafe(updatedUser)))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$").doesNotExist());
+    }
+
+    @Test
+    @WithMockUser(username = "user123", authorities = {"USER"})
+    public void whenDeleteCurrentUser_thenReturnNoContent() throws Exception {
+        mvc.perform(delete("/v1/users/me").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+        then(userRepository).should().deleteById("user123");
+    }
+
+    @Test
+    public void givenUser_whenDeleteCurrentUser_thenReturnAccessDenied() throws Exception {
+        mvc.perform(delete("/v1/users/me").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$").doesNotExist());
     }
 }
