@@ -2,6 +2,7 @@ package com.devpeer.calories.meal;
 
 import com.devpeer.calories.auth.user.Authority;
 import com.devpeer.calories.core.QueryFilter;
+import com.devpeer.calories.core.QueryFilterParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -62,9 +63,9 @@ public class MealService {
     }
 
     public Page<Meal> getMeals(UserDetails requestingUser, String filter, int page, int size) {
-        // TODO: build Query from provided string filter
-        Query query = Query.query(Criteria.where("userId").is(requestingUser.getUsername()));
-        return mealRepository.findAll(query, PageRequest.of(page, size));
+        QueryFilter queryFilter = QueryFilterParser.parse(filter);
+        verifyQueryFilter(requestingUser, queryFilter);
+        return mealRepository.findAll(queryFilter, PageRequest.of(page, size));
     }
 
     public Meal updateMeal(UserDetails requestingUser, Meal meal) {
@@ -93,5 +94,9 @@ public class MealService {
 
     private void verifyPermissions(UserDetails requestingUser, Meal meal) {
         verifyPermissions(requestingUser, meal.getUserId());
+    }
+
+    private void verifyQueryFilter(UserDetails requestingUser, QueryFilter queryFilter) {
+        // TODO
     }
 }
