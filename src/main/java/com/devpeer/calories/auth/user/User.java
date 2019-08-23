@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class User implements UserDetails {
     @Id
-    @Indexed(unique = true)
     @NotEmpty
     private String username;
     @NotEmpty

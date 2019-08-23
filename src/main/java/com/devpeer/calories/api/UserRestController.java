@@ -80,6 +80,7 @@ public class UserRestController {
         return ResponseEntity.ok(savedUser);
     }
 
+    // TODO: what if username is "me" - collision ?
     @GetMapping("/{id}")
     public ResponseEntity getUserById(@PathVariable("id") String id) {
         return userRepository.findById(id)
