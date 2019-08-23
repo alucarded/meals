@@ -1,10 +1,8 @@
-package com.devpeer.calories.api;
+package com.devpeer.calories.user;
 
-import com.devpeer.calories.api.model.RegistrationForm;
-import com.devpeer.calories.auth.user.Authority;
-import com.devpeer.calories.auth.user.User;
-import com.devpeer.calories.auth.user.UserMapper;
-import com.devpeer.calories.auth.user.UserRepository;
+import com.devpeer.calories.auth.model.RegistrationForm;
+import com.devpeer.calories.user.model.Authority;
+import com.devpeer.calories.user.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -17,12 +15,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/v1/users")
-public class UserRestController {
+public class UsersRestController {
 
     private UserRepository userRepository;
 
     @Autowired
-    public UserRestController(UserRepository userRepository) {
+    public UsersRestController(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 

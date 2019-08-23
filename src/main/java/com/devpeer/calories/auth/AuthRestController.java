@@ -1,8 +1,8 @@
-package com.devpeer.calories.api;
+package com.devpeer.calories.auth;
 
 import com.devpeer.calories.auth.jwt.JwtTokenProvider;
-import com.devpeer.calories.auth.user.UserRepository;
-import com.devpeer.calories.api.model.AuthenticationRequest;
+import com.devpeer.calories.user.UserRepository;
+import com.devpeer.calories.auth.model.AuthenticationRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

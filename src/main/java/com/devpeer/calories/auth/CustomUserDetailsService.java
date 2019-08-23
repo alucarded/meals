@@ -1,6 +1,6 @@
 package com.devpeer.calories.auth;
 
-import com.devpeer.calories.auth.user.UserRepository;
+import com.devpeer.calories.user.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

@@ -1,4 +1,4 @@
-package com.devpeer.calories.meal;
+package com.devpeer.calories.meal.model;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;

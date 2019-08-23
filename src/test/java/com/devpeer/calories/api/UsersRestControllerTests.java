@@ -1,13 +1,14 @@
 package com.devpeer.calories.api;
 
 import com.devpeer.calories.CaloriesApplication;
-import com.devpeer.calories.api.model.RegistrationForm;
+import com.devpeer.calories.auth.model.RegistrationForm;
 import com.devpeer.calories.auth.CustomUserDetailsService;
 import com.devpeer.calories.auth.jwt.JwtTokenProvider;
-import com.devpeer.calories.auth.user.Authority;
-import com.devpeer.calories.auth.user.User;
-import com.devpeer.calories.auth.user.UserRepository;
+import com.devpeer.calories.user.model.Authority;
+import com.devpeer.calories.user.model.User;
+import com.devpeer.calories.user.UserRepository;
 import com.devpeer.calories.core.Jackson;
+import com.devpeer.calories.user.UsersRestController;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,9 +36,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(value = {UserRestController.class})
+@WebMvcTest(value = {UsersRestController.class})
 @ContextConfiguration(classes = {CaloriesApplication.class, JwtTokenProvider.class, CustomUserDetailsService.class})
-public class UserRestControllerTests {
+public class UsersRestControllerTests {
 
     @Autowired
     private MockMvc mvc;

@@ -1,12 +1,13 @@
-package com.devpeer.calories.meal;
+package com.devpeer.calories.meal.repository;
 
 import com.devpeer.calories.core.Jackson;
 import com.devpeer.calories.core.MongoQueryBuilder;
 import com.devpeer.calories.core.QueryFilter;
+import com.devpeer.calories.meal.model.Meal;
+import com.devpeer.calories.meal.repository.CustomMealRepository;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.FindAndModifyOptions;
 import org.springframework.data.mongodb.core.MongoTemplate;

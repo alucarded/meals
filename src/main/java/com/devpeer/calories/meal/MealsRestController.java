@@ -1,6 +1,6 @@
 package com.devpeer.calories.meal;
 
-import com.sun.corba.se.spi.orbutil.threadpool.WorkQueue;
+import com.devpeer.calories.meal.model.Meal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

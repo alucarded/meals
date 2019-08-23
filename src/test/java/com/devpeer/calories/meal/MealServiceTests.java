@@ -1,13 +1,13 @@
 package com.devpeer.calories.meal;
 
-import com.devpeer.calories.auth.user.Authority;
+import com.devpeer.calories.meal.model.Meal;
+import com.devpeer.calories.meal.repository.MealRepository;
+import com.devpeer.calories.user.model.Authority;
 import com.devpeer.calories.core.QueryFilter;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.*;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;

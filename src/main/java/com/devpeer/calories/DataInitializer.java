@@ -1,8 +1,8 @@
 package com.devpeer.calories;
 
-import com.devpeer.calories.auth.user.Authority;
-import com.devpeer.calories.auth.user.User;
-import com.devpeer.calories.auth.user.UserRepository;
+import com.devpeer.calories.user.model.Authority;
+import com.devpeer.calories.user.model.User;
+import com.devpeer.calories.user.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;

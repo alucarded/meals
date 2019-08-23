@@ -1,4 +1,4 @@
-package com.devpeer.calories.api.model;
+package com.devpeer.calories.auth.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,5 +1,6 @@
-package com.devpeer.calories.auth.user;
+package com.devpeer.calories.user;
 
+import com.devpeer.calories.user.model.User;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 import java.util.Optional;

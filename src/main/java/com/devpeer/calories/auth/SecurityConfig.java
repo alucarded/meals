@@ -2,7 +2,7 @@ package com.devpeer.calories.auth;
 
 import com.devpeer.calories.auth.jwt.JwtConfigurer;
 import com.devpeer.calories.auth.jwt.JwtTokenProvider;
-import com.devpeer.calories.auth.user.Authority;
+import com.devpeer.calories.user.model.Authority;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
