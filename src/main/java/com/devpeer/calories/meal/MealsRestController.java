@@ -1,10 +1,10 @@
 package com.devpeer.calories.meal;
 
+import com.sun.corba.se.spi.orbutil.threadpool.WorkQueue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +14,6 @@ import java.net.URI;
 
 @RestController
 @RequestMapping("/v1/meals")
-@PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
 public class MealsRestController {
 
     private final MealService mealService;
@@ -45,10 +44,23 @@ public class MealsRestController {
         }
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity getMealById(@AuthenticationPrincipal UserDetails userDetails,
+                                      @PathVariable("id") String id) {
+        try {
+            return ResponseEntity.ok(mealService.getMealById(userDetails, id));
+        } catch (AccessDeniedException e) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage(), e);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error", e);
+        }
+    }
+
     /**
      * Get meals. Regular user can only get his meals.
      * // TODO: add filtering, filtering by userId only allowed for admin, for regular user - always set his ID...
      * // TODO: ...or return bad request if he tries to filter by user ID
+     *
      * @param userDetails
      * @param page
      * @param size
@@ -56,9 +68,9 @@ public class MealsRestController {
      */
     @GetMapping
     public ResponseEntity getMeals(@AuthenticationPrincipal UserDetails userDetails,
-                                   @RequestParam("filter") String filter,
-                                   @RequestParam("page") int page,
-                                   @RequestParam("size") int size) {
+                                   @RequestParam(value = "filter", required = false) String filter,
+                                   @RequestParam("page") Integer page,
+                                   @RequestParam("size") Integer size) {
         try {
             return ResponseEntity.ok(mealService.getMeals(userDetails, filter, page, size));
         } catch (Exception e) {

@@ -27,11 +27,6 @@ public class CustomMealRepositoryImpl implements CustomMealRepository {
     }
 
     // TODO: test this class separately
-    @Override
-    public void deleteByIdForUser(String mealId, String userId) {
-        Query deleteQuery = Query.query(Criteria.where("id").is(mealId).and("userId").is(userId));
-        mongoTemplate.remove(deleteQuery, Meal.class);
-    }
 
     @Override
     public Meal update(Meal meal) {

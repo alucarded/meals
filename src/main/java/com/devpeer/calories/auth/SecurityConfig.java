@@ -53,6 +53,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/v1/users/me").hasAuthority(Authority.USER.name())
                 .antMatchers("/v1/users/**")
                     .hasAnyAuthority(Authority.ADMIN.toString(), Authority.MANAGER.name())
+                .antMatchers("/v1/meals/**")
+                    .hasAnyAuthority(Authority.ADMIN.toString(), Authority.USER.name())
                 .anyRequest().authenticated()
                 .and()
                 .apply(new JwtConfigurer(jwtTokenProvider));

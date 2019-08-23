@@ -7,8 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -57,15 +55,26 @@ public class MealService {
     }
 
     public Optional<Meal> getMealById(UserDetails requestingUser, String id) {
-        Optional<Meal> mealOptional = mealRepository.findById(id);
-        mealOptional.ifPresent(meal -> verifyPermissions(requestingUser, meal.getUserId()));
-        return mealOptional;
+        return mealRepository.findByIdAndUserId(id, requestingUser.getUsername());
     }
 
     public Page<Meal> getMeals(UserDetails requestingUser, String filter, int page, int size) {
+        if (null == filter) {
+            return getMeals(requestingUser, page, size);
+        }
         QueryFilter queryFilter = QueryFilterParser.parse(filter);
         verifyQueryFilter(requestingUser, queryFilter);
         return mealRepository.findAll(queryFilter, PageRequest.of(page, size));
+    }
+
+    private Page<Meal> getMeals(UserDetails requestingUser, int page, int size) {
+        if (requestingUser.getAuthorities().contains(Authority.ADMIN)) {
+            return mealRepository.findAll(PageRequest.of(page, size));
+        } else if (requestingUser.getAuthorities().contains(Authority.USER)) {
+            return mealRepository.findAllByUserId(requestingUser.getUsername(), PageRequest.of(page, size));
+        } else {
+            throw noAuthority();
+        }
     }
 
     public Meal updateMeal(UserDetails requestingUser, Meal meal) {
@@ -73,9 +82,9 @@ public class MealService {
         return mealRepository.update(meal);
     }
 
-    // TODO: what does it throw if object does not exist?
+    // TODO: does it throw if object does not exist?
     public void deleteMeal(UserDetails requestingUser, String id) {
-        mealRepository.deleteByIdForUser(id, requestingUser.getUsername());
+        mealRepository.deleteByIdAndUserId(id, requestingUser.getUsername());
     }
 
     private void verifyPermissions(UserDetails requestingUser, String userId) {
@@ -88,7 +97,7 @@ public class MealService {
                                 requestingUser.getUsername()));
             }
         } else {
-            throw new AccessDeniedException("No permissions to CRUD meals");
+            throw noAuthority();
         }
     }
 
@@ -98,5 +107,9 @@ public class MealService {
 
     private void verifyQueryFilter(UserDetails requestingUser, QueryFilter queryFilter) {
         // TODO
+    }
+
+    private AccessDeniedException noAuthority() {
+        return new AccessDeniedException("No permissions to CRUD meals");
     }
 }
