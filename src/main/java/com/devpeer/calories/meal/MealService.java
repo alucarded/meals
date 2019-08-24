@@ -1,6 +1,7 @@
 package com.devpeer.calories.meal;
 
 import com.devpeer.calories.meal.model.Meal;
+import com.devpeer.calories.meal.nutritionix.NutritionixService;
 import com.devpeer.calories.meal.repository.MealRepository;
 import com.devpeer.calories.user.model.Authority;
 import com.devpeer.calories.core.QueryFilter;
@@ -21,10 +22,13 @@ import java.util.UUID;
 public class MealService {
 
     private final MealRepository mealRepository;
+    private final NutritionixService nutritionixService;
 
     @Autowired
-    public MealService(MealRepository mealRepository) {
+    public MealService(MealRepository mealRepository,
+                       NutritionixService nutritionixService) {
         this.mealRepository = mealRepository;
+        this.nutritionixService = nutritionixService;
     }
 
     public Meal addMeal(UserDetails requestingUser, Meal meal) {
@@ -40,7 +44,7 @@ public class MealService {
             meal.setDateTime(LocalDateTime.now());
         }
         if (null == meal.getCalories()) {
-            // TODO: get calories from external API
+            meal.setCalories(nutritionixService.getCaloriesForText(meal.getText()));
         }
         return mealRepository.save(meal);
     }
