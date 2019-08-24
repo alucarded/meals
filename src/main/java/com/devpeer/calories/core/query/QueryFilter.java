@@ -1,4 +1,4 @@
-package com.devpeer.calories.core;
+package com.devpeer.calories.core.query;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

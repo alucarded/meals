@@ -1,10 +1,9 @@
 package com.devpeer.calories.meal.repository;
 
 import com.devpeer.calories.core.Jackson;
-import com.devpeer.calories.core.MongoQueryBuilder;
-import com.devpeer.calories.core.QueryFilter;
+import com.devpeer.calories.core.query.MongoQueryBuilder;
+import com.devpeer.calories.core.query.QueryFilter;
 import com.devpeer.calories.meal.model.Meal;
-import com.devpeer.calories.meal.repository.CustomMealRepository;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

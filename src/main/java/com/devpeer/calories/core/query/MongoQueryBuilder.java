@@ -1,4 +1,4 @@
-package com.devpeer.calories.core;
+package com.devpeer.calories.core.query;
 
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;

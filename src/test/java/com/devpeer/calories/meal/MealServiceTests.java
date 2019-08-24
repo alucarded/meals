@@ -3,7 +3,7 @@ package com.devpeer.calories.meal;
 import com.devpeer.calories.meal.model.Meal;
 import com.devpeer.calories.meal.repository.MealRepository;
 import com.devpeer.calories.user.model.Authority;
-import com.devpeer.calories.core.QueryFilter;
+import com.devpeer.calories.core.query.QueryFilter;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.*;

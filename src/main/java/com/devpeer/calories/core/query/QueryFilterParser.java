@@ -1,4 +1,4 @@
-package com.devpeer.calories.core;
+package com.devpeer.calories.core.query;
 
 public class QueryFilterParser {
 
