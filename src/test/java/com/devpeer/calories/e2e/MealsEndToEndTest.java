@@ -1,4 +1,4 @@
-package com.devpeer.calories;
+package com.devpeer.calories.e2e;
 
 import com.devpeer.calories.auth.model.AuthenticationRequest;
 import com.devpeer.calories.auth.model.AuthenticationResult;
@@ -7,12 +7,9 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
@@ -24,7 +21,7 @@ import static org.junit.Assert.assertTrue;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @ActiveProfiles("development")
-public class MealsIntegrationTest {
+public class MealsEndToEndTest {
 
     private WebTestClient webTestClient;
 
@@ -44,7 +41,7 @@ public class MealsIntegrationTest {
                 .getToken();
     }
 
-    // TODO: run it with server
+    // Run it with server
     @Ignore
     @Test
     public void testAddMealWithNoCalories() {
@@ -58,5 +55,6 @@ public class MealsIntegrationTest {
                 .getResponseBody();
         assertNotNull(mealResponse);
         assertTrue(mealResponse.getCalories() > 0);
+        System.out.println("Calories: " + mealResponse.getCalories());
     }
 }
