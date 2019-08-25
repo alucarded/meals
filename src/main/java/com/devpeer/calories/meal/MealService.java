@@ -1,11 +1,11 @@
 package com.devpeer.calories.meal;
 
+import com.devpeer.calories.core.query.QueryFilter;
+import com.devpeer.calories.core.query.QueryFilterParser;
 import com.devpeer.calories.meal.model.Meal;
 import com.devpeer.calories.meal.nutritionix.NutritionixService;
 import com.devpeer.calories.meal.repository.MealRepository;
 import com.devpeer.calories.user.model.Authority;
-import com.devpeer.calories.core.query.QueryFilter;
-import com.devpeer.calories.core.query.QueryFilterParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,7 +14,8 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -39,9 +40,13 @@ public class MealService {
             verifyPermissions(requestingUser, mealUserId);
         }
         meal.setId(UUID.randomUUID().toString());
-        if (null == meal.getDateTime()) {
+        if (null == meal.getDate()) {
             // Set current date
-            meal.setDateTime(LocalDateTime.now());
+            meal.setDate(LocalDate.now());
+        }
+        if (null == meal.getTime()) {
+            // Set current time
+            meal.setTime(LocalTime.now());
         }
         if (null == meal.getCalories()) {
             meal.setCalories(nutritionixService.getCaloriesForText(meal.getText()));

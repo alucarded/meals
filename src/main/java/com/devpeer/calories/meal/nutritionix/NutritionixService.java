@@ -2,6 +2,7 @@ package com.devpeer.calories.meal.nutritionix;
 
 import com.devpeer.calories.meal.nutritionix.model.Food;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
 
 @Service

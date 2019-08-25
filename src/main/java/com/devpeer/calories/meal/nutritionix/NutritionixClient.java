@@ -3,14 +3,17 @@ package com.devpeer.calories.meal.nutritionix;
 import com.devpeer.calories.meal.nutritionix.model.Food;
 import com.devpeer.calories.meal.nutritionix.model.NutritionsRequest;
 import com.devpeer.calories.meal.nutritionix.model.NutritionsResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.Collections;
 import java.util.List;
 
+@Component
 public class NutritionixClient {
 
     private static final String API_VERSION = "v2";

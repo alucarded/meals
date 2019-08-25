@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
@@ -30,12 +31,12 @@ public class MealServiceTests {
     @Captor
     ArgumentCaptor<Meal> mealArgumentCaptor;
 
-    private static final LocalDateTime TEST_DATETIME = LocalDateTime.parse("2019-08-21 13:00:00",
-            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+    private static final LocalDate TEST_DATE = LocalDate.parse("2019-08-21",
+            DateTimeFormatter.ofPattern("yyyy-MM-dd"));
     private static final Meal TEST_MEAL =  Meal.builder()
             .id("id123")
             .userId("user123")
-            .dateTime(TEST_DATETIME)
+            .date(TEST_DATE)
             .text("This was a good meal")
             .calories(1000).build();
 
@@ -54,7 +55,7 @@ public class MealServiceTests {
         Mockito.verify(mealRepository).save(mealArgumentCaptor.capture());
         assertEquals("user123", mealArgumentCaptor.getValue().getUserId());
         assertNotEquals("id123", mealArgumentCaptor.getValue().getId());
-        assertEquals(TEST_DATETIME, mealArgumentCaptor.getValue().getDateTime());
+        assertEquals(TEST_DATE, mealArgumentCaptor.getValue().getDate());
         assertEquals("This was a good meal", mealArgumentCaptor.getValue().getText());
         assertEquals(Integer.valueOf(1000), mealArgumentCaptor.getValue().getCalories());
     }
@@ -85,7 +86,7 @@ public class MealServiceTests {
         Mockito.verify(mealRepository).update(mealArgumentCaptor.capture());
         assertEquals("user123", mealArgumentCaptor.getValue().getUserId());
         assertEquals("id123", mealArgumentCaptor.getValue().getId());
-        assertEquals(TEST_DATETIME, mealArgumentCaptor.getValue().getDateTime());
+        assertEquals(TEST_DATE, mealArgumentCaptor.getValue().getDate());
         assertEquals("This was a good meal", mealArgumentCaptor.getValue().getText());
         assertEquals(Integer.valueOf(1000), mealArgumentCaptor.getValue().getCalories());
     }

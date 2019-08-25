@@ -12,7 +12,9 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Data
 @Builder
@@ -34,8 +36,11 @@ public class Meal {
     /**
      * UTC timezone
      */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime dateTime;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate date;
+
+    @JsonFormat(pattern = "HH:mm:ss")
+    private LocalTime time;
 
     private String text;
 
