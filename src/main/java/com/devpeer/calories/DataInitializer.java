@@ -27,30 +27,35 @@ public class DataInitializer implements CommandLineRunner {
 
     private static Meal[] TEST_MEALS = {
             Meal.builder()
+                    .id("1")
                     .date(LocalDate.parse("2019-06-22", DATE_FORMATTER))
                     .time(LocalTime.parse("22:21:00", TIME_FORMATTER))
                     .text("some text")
                     .calories(120)
                     .build(),
             Meal.builder()
+                    .id("2")
                     .date(LocalDate.parse("2019-07-11", DATE_FORMATTER))
                     .time(LocalTime.parse("14:21:00", TIME_FORMATTER))
                     .text("some text2")
                     .calories(456)
                     .build(),
             Meal.builder()
+                    .id("3")
                     .date(LocalDate.parse("2019-08-21", DATE_FORMATTER))
                     .time(LocalTime.parse("09:11:00", TIME_FORMATTER))
                     .text("some text3")
                     .calories(333)
                     .build(),
             Meal.builder()
+                    .id("4")
                     .date(LocalDate.parse("2019-08-24", DATE_FORMATTER))
                     .time(LocalTime.parse("09:11:00", TIME_FORMATTER))
                     .text("some text4")
                     .calories(122)
                     .build(),
             Meal.builder()
+                    .id("5")
                     .date(LocalDate.parse("2019-08-25", DATE_FORMATTER))
                     .time(LocalTime.parse("12:25:12", TIME_FORMATTER))
                     .text("some text5")

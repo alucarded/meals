@@ -40,7 +40,7 @@ public class CustomMealRepositoryImpl implements CustomMealRepository {
     @Override
     public Page<Meal> findAll(QueryFilter queryFilter, Pageable pageable) {
         Criteria criteria = MongoCriteriaBuilder.create().build(queryFilter);
-        Query query = new Query(criteria);
+        Query query = new Query(criteria).with(pageable);
         List<Meal> list = mongoTemplate.find(query, Meal.class);
         return PageableExecutionUtils.getPage(
                 list,

@@ -57,13 +57,13 @@ public class MealsEndToEndTest {
     @Test
     public void testGetMealsWithFilter() {
         String mealsResponse = webTestClient.get()
-                .uri("/v1/meals?filter=calories gt 500&page=0&size=1")
+                .uri("/v1/meals?filter=calories gt 100&page=0&size=1")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .exchange()
                 .expectBody(String.class)
                 .returnResult()
                 .getResponseBody();
         Page<Meal> mealsPage = Jackson.fromJsonUnsafe(mealsResponse, new TypeReference<Page<Meal>>() {});
-        System.out.println(mealsResponse);
+        System.out.println(mealsPage.getContent());
     }
 }
