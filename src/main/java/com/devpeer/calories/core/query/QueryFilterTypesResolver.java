@@ -15,6 +15,7 @@ public class QueryFilterTypesResolver {
     static {
         // Default resolvers
         typeResolverRegistry.put(Integer.class, Integer::parseInt);
+        typeResolverRegistry.put(Float.class, Double::parseDouble);
         typeResolverRegistry.put(Double.class, Double::parseDouble);
         typeResolverRegistry.put(String.class, (str) -> str);
         typeResolverRegistry.put(LocalDate.class, (str) -> LocalDate.parse(str, DATE_FORMATTER));
