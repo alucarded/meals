@@ -1,7 +1,7 @@
 package com.devpeer.calories.user.model;
 
-import com.devpeer.calories.user.model.Authority;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,6 +27,7 @@ public class User implements UserDetails {
     @NotEmpty
     private String username;
     @NotEmpty
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     // TODO: make sure it is hashed
     private String password;
     @Builder.Default

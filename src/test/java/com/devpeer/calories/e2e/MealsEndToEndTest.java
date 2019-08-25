@@ -57,7 +57,7 @@ public class MealsEndToEndTest {
     @Test
     public void testGetMealsWithFilter() {
         String mealsResponse = webTestClient.get()
-                .uri("/v1/meals?filter=calories gt 100&page=0&size=1")
+                .uri("/v1/meals?filter=((calories gt 100) AND (date eq 2019-08-21)) OR (calories lt 20)&page=0&size=5")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .exchange()
                 .expectBody(String.class)
