@@ -4,6 +4,7 @@ import com.devpeer.calories.CaloriesApplication;
 import com.devpeer.calories.auth.model.RegistrationForm;
 import com.devpeer.calories.auth.CustomUserDetailsService;
 import com.devpeer.calories.auth.jwt.JwtTokenProvider;
+import com.devpeer.calories.core.query.QueryFilter;
 import com.devpeer.calories.user.model.Authority;
 import com.devpeer.calories.user.model.User;
 import com.devpeer.calories.user.UserRepository;
@@ -14,6 +15,10 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
@@ -56,18 +61,42 @@ public class UsersRestControllerTests {
 
     @Test
     @WithMockUser(authorities = {"USER", "MANAGER"})
-    public void givenUsers_whenGetUsers_thenReturnJsonArray() throws Exception {
+    public void givenUsers_whenGetUsers_thenReturnPage() throws Exception {
         List<User> allUsers = Arrays.asList(TEST_USER);
+        PageRequest pageRequest = PageRequest.of(0, 10);
+        Page<User> paged = PageableExecutionUtils.getPage(allUsers, pageRequest, () -> 1L);
 
-        given(userRepository.findAll()).willReturn(allUsers);
+        given(userRepository.findAll(PageRequest.of(0, 10))).willReturn(paged);
 
-        mvc.perform(get("/v1/users").contentType(MediaType.APPLICATION_JSON))
+        mvc.perform(get("/v1/users?page=0&size=10").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].username", is(TEST_USERNAME)))
-                .andExpect(jsonPath("$[0].password").doesNotExist())
-                .andExpect(jsonPath("$[0].authorities", hasSize(1)))
-                .andExpect(jsonPath("$[0].authorities[0]", is(Authority.USER.toString())));
+                .andExpect(jsonPath("$.content", hasSize(1)))
+                .andExpect(jsonPath("$.content[0].username", is(TEST_USERNAME)))
+                .andExpect(jsonPath("$.content[0].password").doesNotExist())
+                .andExpect(jsonPath("$.content[0].authorities", hasSize(1)))
+                .andExpect(jsonPath("$.content[0].authorities[0]", is(Authority.USER.toString())));
+    }
+
+    @Test
+    @WithMockUser(authorities = {"USER", "MANAGER"})
+    public void givenUsers_whenGetUsersWithFilter_thenReturnPage() throws Exception {
+        List<User> allUsers = Arrays.asList(TEST_USER);
+        QueryFilter queryFilter = new QueryFilter();
+        queryFilter.setKey("username");
+        queryFilter.setValue("user");
+        queryFilter.setOperator(QueryFilter.Operator.EQ);
+        PageRequest pageRequest = PageRequest.of(0, 10);
+        Page<User> paged = PageableExecutionUtils.getPage(allUsers, pageRequest, () -> 1L);
+
+        given(userRepository.findAll(queryFilter, PageRequest.of(0, 10))).willReturn(paged);
+
+        mvc.perform(get("/v1/users?filter=username eq user&page=0&size=10").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content", hasSize(1)))
+                .andExpect(jsonPath("$.content[0].username", is(TEST_USERNAME)))
+                .andExpect(jsonPath("$.content[0].password").doesNotExist())
+                .andExpect(jsonPath("$.content[0].authorities", hasSize(1)))
+                .andExpect(jsonPath("$.content[0].authorities[0]", is(Authority.USER.toString())));
     }
 
     @Test

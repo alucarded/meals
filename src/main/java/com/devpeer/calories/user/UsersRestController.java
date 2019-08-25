@@ -1,17 +1,18 @@
 package com.devpeer.calories.user;
 
 import com.devpeer.calories.auth.model.RegistrationForm;
+import com.devpeer.calories.core.query.QueryFilter;
+import com.devpeer.calories.core.query.QueryFilterParser;
 import com.devpeer.calories.user.model.Authority;
 import com.devpeer.calories.user.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 @RestController
 @RequestMapping("/v1/users")
@@ -44,14 +45,15 @@ public class UsersRestController {
     }
 
     @GetMapping
-    public ResponseEntity getAllUsers() {
-        Iterable<User> userIterable = userRepository.findAll();
-        List<User> users = new ArrayList<>();
-        userIterable.forEach(user -> {
-            user.setPassword(null);
-            users.add(user);
-        });
-        return ResponseEntity.ok(users);
+    public ResponseEntity getAllUsers(@RequestParam(value = "filter", required = false) String filter,
+                                      @RequestParam(value = "page") Integer page,
+                                      @RequestParam(value = "size") Integer size) {
+        if (filter != null) {
+            QueryFilter queryFilter = QueryFilterParser.parse(filter, User.class);
+            return ResponseEntity.ok(userRepository.findAll(queryFilter, PageRequest.of(page, size)));
+        }
+
+        return ResponseEntity.ok(userRepository.findAll(PageRequest.of(page, size)));
     }
 
     @PostMapping
