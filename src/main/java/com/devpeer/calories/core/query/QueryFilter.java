@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import org.springframework.lang.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Data
@@ -32,5 +31,9 @@ public class QueryFilter {
     @Nullable private String key;
     @Nullable private Object value;
     private List<QueryFilter> chainOperations = new ArrayList<>();
-    private Operator operator;
+    @Nullable private Operator operator;
+
+    public void addChainOperation(QueryFilter queryFilter) {
+        chainOperations.add(queryFilter);
+    }
 }
