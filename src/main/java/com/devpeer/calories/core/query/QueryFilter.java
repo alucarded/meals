@@ -31,7 +31,7 @@ public class QueryFilter {
     @Nullable private String key;
     @Nullable private Object value;
     private List<QueryFilter> chainOperations = new ArrayList<>();
-    @Nullable private Operator operator;
+    private Operator operator;
 
     public void addChainOperation(QueryFilter queryFilter) {
         chainOperations.add(queryFilter);

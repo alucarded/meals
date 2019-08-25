@@ -18,7 +18,7 @@ public class QueryFilterParser {
     public static QueryFilter parse(String filter) {
         try {
             QueryFilterParser queryFilterParser = new QueryFilterParser(filter);
-            return queryFilterParser.getFilterStack();
+            return queryFilterParser.getQueryFilter();
         } catch (Exception e) {
             throw new QueryFilterParseException(e);
         }
@@ -85,7 +85,7 @@ public class QueryFilterParser {
         }
     }
 
-    private QueryFilter getFilterStack() {
+    private QueryFilter getQueryFilter() {
         QueryFilter ret = filterStack.peek();
         while (ret.getChainOperations().size() == 1 && Objects.isNull(ret.getOperator())) {
             ret = ret.getChainOperations().get(0);

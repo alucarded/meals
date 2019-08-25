@@ -1,7 +1,7 @@
 package com.devpeer.calories.meal.repository;
 
 import com.devpeer.calories.core.Jackson;
-import com.devpeer.calories.core.query.MongoQueryBuilder;
+import com.devpeer.calories.core.query.MongoCriteriaBuilder;
 import com.devpeer.calories.core.query.QueryFilter;
 import com.devpeer.calories.meal.model.Meal;
 import org.bson.Document;
@@ -39,7 +39,8 @@ public class CustomMealRepositoryImpl implements CustomMealRepository {
 
     @Override
     public Page<Meal> findAll(QueryFilter queryFilter, Pageable pageable) {
-        Query query = MongoQueryBuilder.build(queryFilter);
+        Criteria criteria = MongoCriteriaBuilder.create(Meal.class).build(queryFilter);
+        Query query = new Query(criteria);
         List<Meal> list = mongoTemplate.find(query, Meal.class);
         return PageableExecutionUtils.getPage(
                 list,

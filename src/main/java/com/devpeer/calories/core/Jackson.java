@@ -38,6 +38,14 @@ public class Jackson {
         }
     }
 
+    public static Map<String, Object> fromJsonToMap(String str) {
+        try {
+            return objectMapper.readValue(str, new TypeReference<Map<String, Object>>() {});
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static Map<String, Object> toObjectMap(Object obj) {
         return objectMapper.convertValue(obj, new TypeReference<Map<String, Object>>() {});
     }
