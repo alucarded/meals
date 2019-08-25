@@ -20,6 +20,10 @@ public class Jackson {
         objectMapper.registerModule(new JavaTimeModule());
     }
 
+    public static ObjectMapper mapper() {
+        return objectMapper;
+    }
+
     public static String toJsonUnsafe(Object obj) {
         try {
             StringWriter writer = new StringWriter();

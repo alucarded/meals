@@ -1,20 +1,16 @@
 package com.devpeer.calories.core.query;
 
+import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
 import java.util.List;
 
-public class MongoCriteriaBuilder<T> {
+@NoArgsConstructor
+public class MongoCriteriaBuilder {
 
-    private final Class<T> klass;
-
-    public MongoCriteriaBuilder(Class<T> klass) {
-        this.klass = klass;
-    }
-
-    public static <T> MongoCriteriaBuilder<T> create(Class<T> klass) {
-        return new MongoCriteriaBuilder<>(klass);
+    public static MongoCriteriaBuilder create() {
+        return new MongoCriteriaBuilder();
     }
 
     public Criteria build(QueryFilter queryFilter) {

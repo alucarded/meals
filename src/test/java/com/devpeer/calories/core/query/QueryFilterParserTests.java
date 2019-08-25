@@ -1,4 +1,4 @@
-package com.devpeer.calories.core;
+package com.devpeer.calories.core.query;
 
 import com.devpeer.calories.core.query.QueryFilter;
 import com.devpeer.calories.core.query.QueryFilterParseException;

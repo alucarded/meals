@@ -15,13 +15,19 @@ public class QueryFilterParser {
 
     private Stack<QueryFilter> filterStack;
 
-    public static QueryFilter parse(String filter) {
+    public static QueryFilter parse(String filter, Class<?> klass) {
         try {
-            QueryFilterParser queryFilterParser = new QueryFilterParser(filter);
-            return queryFilterParser.getQueryFilter();
+            QueryFilter queryFilter = parse(filter);
+            QueryFilterTypesResolver queryFilterTypesResolver = new QueryFilterTypesResolver(klass);
+            return queryFilterTypesResolver.resolveTypes(queryFilter);
         } catch (Exception e) {
             throw new QueryFilterParseException(e);
         }
+    }
+
+    static QueryFilter parse(String filter) {
+        QueryFilterParser queryFilterParser = new QueryFilterParser(filter);
+        return queryFilterParser.getQueryFilter();
     }
 
     private QueryFilterParser(String filter) {

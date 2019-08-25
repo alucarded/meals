@@ -27,7 +27,7 @@ public class MongoCriteriaBuilderTest {
         queryFilter.setOperator(QueryFilter.Operator.EQ);
         queryFilter.setKey("someInteger");
         queryFilter.setValue(11);
-        Criteria criteria = MongoCriteriaBuilder.create(SomeClass.class).build(queryFilter);
+        Criteria criteria = MongoCriteriaBuilder.create().build(queryFilter);
         Map<String, Object> queryMap = Jackson.fromJsonToMap(criteria.getCriteriaObject().toJson());
         System.out.println(criteria.getCriteriaObject().toJson());
         assertEquals(11, queryMap.get("someInteger"));
@@ -49,7 +49,7 @@ public class MongoCriteriaBuilderTest {
         andFilter.setOperator(QueryFilter.Operator.AND);
         andFilter.setChainOperations(Arrays.asList(eqFilter, gtFilter));
 
-        Criteria criteria = MongoCriteriaBuilder.create(SomeClass.class).build(andFilter);
+        Criteria criteria = MongoCriteriaBuilder.create().build(andFilter);
         Map<String, Object> queryMap = Jackson.fromJsonToMap(criteria.getCriteriaObject().toJson());
         System.out.println(criteria.getCriteriaObject().toJson());
         // TODO: test

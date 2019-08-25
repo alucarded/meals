@@ -73,7 +73,7 @@ public class MealService {
         if (null == filter) {
             return getMeals(requestingUser, page, size);
         }
-        QueryFilter queryFilter = QueryFilterParser.parse(filter);
+        QueryFilter queryFilter = QueryFilterParser.parse(filter, Meal.class);
         verifyQueryFilter(requestingUser, queryFilter);
         return mealRepository.findAll(queryFilter, PageRequest.of(page, size));
     }
