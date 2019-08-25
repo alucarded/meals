@@ -10,7 +10,7 @@ public class FieldTypeResolver {
     private Map<String, Class<?>> classForField;
 
     public FieldTypeResolver(Class<?> klass) {
-        classForField = Arrays.stream(klass.getFields())
+        classForField = Arrays.stream(klass.getDeclaredFields())
                 .map(field -> new AbstractMap.SimpleEntry<String, Class<?>>(field.getName(), field.getType()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }

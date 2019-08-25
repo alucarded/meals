@@ -1,6 +1,6 @@
 package com.devpeer.calories.meal.repository;
 
-import com.devpeer.calories.core.Jackson;
+import com.devpeer.calories.core.jackson.Jackson;
 import com.devpeer.calories.core.query.MongoCriteriaBuilder;
 import com.devpeer.calories.core.query.QueryFilter;
 import com.devpeer.calories.meal.model.Meal;

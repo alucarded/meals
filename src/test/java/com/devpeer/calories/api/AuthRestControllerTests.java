@@ -7,7 +7,7 @@ import com.devpeer.calories.auth.jwt.JwtTokenProvider;
 import com.devpeer.calories.user.model.Authority;
 import com.devpeer.calories.user.model.User;
 import com.devpeer.calories.user.UserRepository;
-import com.devpeer.calories.core.Jackson;
+import com.devpeer.calories.core.jackson.Jackson;
 import com.devpeer.calories.auth.model.AuthenticationRequest;
 import org.junit.Test;
 import org.junit.runner.RunWith;

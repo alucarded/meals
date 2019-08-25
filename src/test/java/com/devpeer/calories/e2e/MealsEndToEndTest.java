@@ -2,10 +2,14 @@ package com.devpeer.calories.e2e;
 
 import com.devpeer.calories.auth.model.AuthenticationRequest;
 import com.devpeer.calories.auth.model.AuthenticationResult;
+import com.devpeer.calories.core.jackson.Jackson;
 import com.devpeer.calories.meal.model.Meal;
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
@@ -21,10 +25,10 @@ public class MealsEndToEndTest {
 
     private String token;
 
-    // TODO: could be BeforeClass
     @Before
     public void setUp() {
         webTestClient = WebTestClient.bindToServer().baseUrl("http://localhost:8080").build();
+        // TODO: could be in BeforeClass
         token = Objects.requireNonNull(webTestClient.post()
                 .uri("/v1/auth/signin")
                 .syncBody(new AuthenticationRequest("admin", "password"))
@@ -48,5 +52,18 @@ public class MealsEndToEndTest {
         assertNotNull(mealResponse);
         assertTrue(mealResponse.getCalories() > 0);
         System.out.println("Calories: " + mealResponse.getCalories());
+    }
+
+    @Test
+    public void testGetMealsWithFilter() {
+        String mealsResponse = webTestClient.get()
+                .uri("/v1/meals?filter=calories gt 500&page=0&size=1")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                .exchange()
+                .expectBody(String.class)
+                .returnResult()
+                .getResponseBody();
+        Page<Meal> mealsPage = Jackson.fromJsonUnsafe(mealsResponse, new TypeReference<Page<Meal>>() {});
+        System.out.println(mealsResponse);
     }
 }

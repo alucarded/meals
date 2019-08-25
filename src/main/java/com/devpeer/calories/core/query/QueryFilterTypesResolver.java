@@ -2,14 +2,13 @@ package com.devpeer.calories.core.query;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
-public class QueryFilterTypesResolver {
+import static com.devpeer.calories.core.Common.DATE_FORMATTER;
+import static com.devpeer.calories.core.Common.TIME_FORMATTER;
 
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss");
+public class QueryFilterTypesResolver {
 
     private static Map<Class<?>, TypeResolver> typeResolverRegistry = new HashMap<>();
 

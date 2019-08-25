@@ -1,5 +1,6 @@
-package com.devpeer.calories.core;
+package com.devpeer.calories.core.jackson;
 
+import com.devpeer.calories.core.jackson.pagination.PageModule;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -18,6 +19,7 @@ public class Jackson {
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.registerModule(new PageModule());
     }
 
     public static ObjectMapper mapper() {
@@ -37,6 +39,14 @@ public class Jackson {
     public static <T> T fromJsonUnsafe(String str, Class<T> clazz) {
         try {
             return objectMapper.readValue(str, clazz);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static <T> T fromJsonUnsafe(String str, TypeReference<T> typeReference) {
+        try {
+            return objectMapper.readValue(str, typeReference);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

@@ -1,5 +1,6 @@
 package com.devpeer.calories.core;
 
+import com.devpeer.calories.core.jackson.Jackson;
 import com.devpeer.calories.core.query.MongoCriteriaBuilder;
 import com.devpeer.calories.core.query.QueryFilter;
 import lombok.Data;

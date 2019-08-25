@@ -3,7 +3,7 @@ package com.devpeer.calories.meal;
 import com.devpeer.calories.CaloriesApplication;
 import com.devpeer.calories.auth.CustomUserDetailsService;
 import com.devpeer.calories.auth.jwt.JwtTokenProvider;
-import com.devpeer.calories.core.Jackson;
+import com.devpeer.calories.core.jackson.Jackson;
 import com.devpeer.calories.meal.model.Meal;
 import com.devpeer.calories.meal.repository.MealRepository;
 import com.devpeer.calories.user.UserRepository;
@@ -23,7 +23,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
