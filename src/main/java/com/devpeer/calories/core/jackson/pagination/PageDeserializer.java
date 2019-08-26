@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+// Source: https://stackoverflow.com/questions/52490399/spring-boot-page-deserialization-pageimpl-no-constructor/54730375#54730375
 public class PageDeserializer extends JsonDeserializer<Page<?>> implements ContextualDeserializer {
     private static final String CONTENT = "content";
     private static final String NUMBER = "number";

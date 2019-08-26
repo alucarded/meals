@@ -1,20 +1,14 @@
 package com.devpeer.calories.misc;
 
-import com.devpeer.calories.core.CustomTypeComparator;
 import com.devpeer.calories.meal.model.Meal;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
-import org.springframework.expression.spel.standard.SpelExpression;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
-import org.springframework.format.datetime.DateFormatter;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
 import static org.junit.Assert.assertNotNull;

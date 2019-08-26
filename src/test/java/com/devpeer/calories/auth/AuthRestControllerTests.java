@@ -1,4 +1,4 @@
-package com.devpeer.calories.api;
+package com.devpeer.calories.auth;
 
 import com.devpeer.calories.CaloriesApplication;
 import com.devpeer.calories.auth.AuthRestController;

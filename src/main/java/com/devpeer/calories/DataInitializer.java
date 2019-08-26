@@ -60,6 +60,20 @@ public class DataInitializer implements CommandLineRunner {
                     .time(LocalTime.parse("12:25:12", TIME_FORMATTER))
                     .text("some text5")
                     .calories(1200)
+                    .build(),
+            Meal.builder()
+                    .id("6")
+                    .date(LocalDate.parse("2019-08-25", DATE_FORMATTER))
+                    .time(LocalTime.parse("15:25:12", TIME_FORMATTER))
+                    .text("some text6")
+                    .calories(100)
+                    .build(),
+            Meal.builder()
+                    .id("7")
+                    .date(LocalDate.parse("2019-08-25", DATE_FORMATTER))
+                    .time(LocalTime.parse("17:20:15", TIME_FORMATTER))
+                    .text("some text7")
+                    .calories(300)
                     .build()
     };
 

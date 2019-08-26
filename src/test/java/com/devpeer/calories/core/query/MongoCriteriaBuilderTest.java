@@ -1,4 +1,4 @@
-package com.devpeer.calories.core;
+package com.devpeer.calories.core.query;
 
 import com.devpeer.calories.core.jackson.Jackson;
 import com.devpeer.calories.core.query.MongoCriteriaBuilder;
