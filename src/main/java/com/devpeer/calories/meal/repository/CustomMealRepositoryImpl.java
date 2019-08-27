@@ -16,7 +16,10 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.repository.support.PageableExecutionUtils;
+import org.springframework.lang.Nullable;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class CustomMealRepositoryImpl implements CustomMealRepository {
@@ -38,8 +41,9 @@ public class CustomMealRepositoryImpl implements CustomMealRepository {
     }
 
     @Override
-    public Page<Meal> findAllWithTotalCalories(QueryFilter queryFilter, Pageable pageable) {
+    public Page<Meal> findAllWithAggregations(@Nullable QueryFilter queryFilter, Pageable pageable) {
         // TODO: recalculate total for the day with every write for userId and date pair
+        // TODO: we would benefit here if we use reactive framework...
         GroupOperation grouping = Aggregation.group("userId", "date")
                 .sum("calories").as("totalCalories");
         OutOperation outOperation = Aggregation.out(CaloriesForDay.class.getSimpleName());
@@ -47,26 +51,56 @@ public class CustomMealRepositoryImpl implements CustomMealRepository {
                 Meal.class, CaloriesForDay.class).getMappedResults()
                 .forEach(caloriesForDay -> System.out.println(caloriesForDay.toString()));
 
-        LookupOperation lookup = Aggregation.lookup(CaloriesForDay.class.getSimpleName(),
+        List<AggregationOperation> allAggregations = new ArrayList<>();
+        // Join with aggregated calories for day
+        LookupOperation caloriesForDayLookup = Aggregation.lookup(CaloriesForDay.class.getSimpleName(),
                 "userId", "_id.userId", "caloriesForDay");
         UnwindOperation unwindOperation = Aggregation.unwind("caloriesForDay");
-        ProjectionOperation projectionOperation = Aggregation.project("date")
+        // $addFields/$set is unsupported in this Mongo driver...
+        ProjectionOperation projectionOperation = Aggregation.project("userId", "date", "time", "text", "calories")
                 .and(AggregationSpELExpression.expressionOf("cond(date == caloriesForDay._id.date, 1, 0)"))
                 .as("matched")
-                .andInclude("userId", "time", "text", "calories")
-                .and("caloriesForDay.totalCalories").as("totalCalories");
+                .and("caloriesForDay.totalCalories")
+                .as("totalCalories");
         MatchOperation matchOperation = Aggregation.match(Criteria.where("matched").is(1));
-        // Create criteria from filter
-        Criteria criteria = MongoCriteriaBuilder.create().build(queryFilter);
-        MatchOperation filterMatch = Aggregation.match(criteria);
-        // TODO: join with user settings here
+        allAggregations.addAll(Arrays.asList(
+                caloriesForDayLookup,
+                unwindOperation,
+                projectionOperation,
+                matchOperation));
+
+        if (queryFilter != null) {
+            // Match with criteria from filter
+            Criteria criteria = MongoCriteriaBuilder.create().build(queryFilter);
+            MatchOperation filterMatch = Aggregation.match(criteria);
+            allAggregations.add(filterMatch);
+        }
+
+        // Join with user settings
+        LookupOperation userSettingsLookup = LookupOperation.LookupOperationBuilder.newBuilder()
+                .from("userSettings")
+                .localField("userId")
+                .foreignField("_id")
+                .as("userSettings");
+        UnwindOperation userSettingsUnwind = Aggregation.unwind("userSettings", true);
+        ProjectionOperation userSettingsProjection = Aggregation.project("userId", "date", "time", "text", "calories")
+                .and(AggregationSpELExpression.expressionOf(
+                        "!userSettings || totalCalories < userSettings.expectedCaloriesPerDay"))
+                .as("isTotalForTheDayOk");
+        allAggregations.addAll(Arrays.asList(userSettingsLookup,
+                userSettingsUnwind,
+                userSettingsProjection));
 
         // Pagination with aggregation
         SkipOperation skipOperation = Aggregation.skip(pageable.getPageNumber() * pageable.getPageSize());
         LimitOperation limitOperation = Aggregation.limit(pageable.getPageSize());
+        allAggregations.addAll(
+                Arrays.asList(
+                        skipOperation,
+                        limitOperation)
+        );
         List<Meal> result = mongoTemplate.aggregate(
-                Aggregation.newAggregation(lookup, unwindOperation, projectionOperation, matchOperation, filterMatch,
-                        skipOperation, limitOperation),
+                Aggregation.newAggregation(allAggregations),
                 Meal.class, Meal.class)
                 .getMappedResults();
         return PageableExecutionUtils.getPage(result, pageable, result::size);

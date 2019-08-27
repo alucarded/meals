@@ -1,6 +1,7 @@
 package com.devpeer.calories.meal.model;
 
 
+import com.devpeer.calories.settings.model.UserSettings;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
@@ -44,13 +45,6 @@ public class Meal {
     private String text;
 
     private Integer calories;
-
-    @BsonIgnore
-    private Integer totalCalories;
-
-//    private CaloriesForDay caloriesForDay;
-//
-//    private Integer matched;
 
     /**
      * Extra boolean field set to true, if the total for that day is less than expected number of calories per day,

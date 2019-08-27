@@ -3,21 +3,25 @@ package com.devpeer.calories.meal;
 import com.devpeer.calories.core.query.QueryFilter;
 import com.devpeer.calories.meal.model.Meal;
 import com.devpeer.calories.meal.repository.MealRepository;
+import com.devpeer.calories.settings.UserSettingsRepository;
+import com.devpeer.calories.settings.model.UserSettings;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Arrays;
+import java.util.List;
 
 import static com.devpeer.calories.core.Common.DATE_FORMATTER;
 import static com.devpeer.calories.core.Common.TIME_FORMATTER;
+import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
 @DataMongoTest
@@ -26,7 +30,10 @@ public class MealRepositoryTests {
     @Autowired
     private MealRepository mealRepository;
 
-    private static Meal[] TEST_MEALS = {
+    @Autowired
+    private UserSettingsRepository userSettingsRepository;
+
+    private static final Meal[] TEST_MEALS = {
             Meal.builder()
                     .id("1")
                     .userId("admin")
@@ -104,18 +111,41 @@ public class MealRepositoryTests {
     @Before
     public void setUpData() {
         Arrays.stream(TEST_MEALS).forEach(mealRepository::save);
+        userSettingsRepository.save(new UserSettings("admin", 1000));
     }
 
     @Test
-    public void testAggregationWorks() {
-        // TODO: test properly
-        QueryFilter queryFilter = new QueryFilter();
-        queryFilter.setOperator(QueryFilter.Operator.EQ);
-        queryFilter.setKey("userId");
-        queryFilter.setValue("admin");
-        PageRequest pageRequest = PageRequest.of(0, 5);
-        mealRepository.findAllWithTotalCalories(queryFilter, pageRequest).forEach(
+    public void testFindAllWithAggregations() {
+        PageRequest pageRequest = PageRequest.of(0, 8);
+        Page<Meal> pagedMeals = mealRepository.findAllWithAggregations(null, pageRequest);
+        pagedMeals.forEach(
                 meal -> System.out.println(meal.toString())
         );
+        assertEquals(8, pagedMeals.getTotalElements());
+        assertEquals(1, pagedMeals.getTotalPages());
+
+        List<Meal> meals = pagedMeals.getContent();
+
+        Meal firstMeal = meals.get(0);
+        assertEquals("admin", firstMeal.getUserId());
+        assertEquals(LocalDate.parse("2019-06-22", DATE_FORMATTER), firstMeal.getDate());
+        assertEquals(LocalTime.parse("22:21:00", TIME_FORMATTER), firstMeal.getTime());
+        assertEquals(120, (long) firstMeal.getCalories());
+        assertEquals(true, firstMeal.getIsTotalForTheDayOk());
+
+        Meal sixthMeal = meals.get(4);
+        assertEquals("admin", sixthMeal.getUserId());
+        assertEquals(LocalDate.parse("2019-08-25", DATE_FORMATTER), sixthMeal.getDate());
+        assertEquals(LocalTime.parse("12:25:12", TIME_FORMATTER), sixthMeal.getTime());
+        assertEquals(1200, (long) sixthMeal.getCalories());
+        assertEquals(false, sixthMeal.getIsTotalForTheDayOk());
+
+        Meal ninthMeal = meals.get(7);
+        assertEquals("user123", ninthMeal.getUserId());
+        assertEquals(LocalDate.parse("2019-08-25", DATE_FORMATTER), ninthMeal.getDate());
+        assertEquals(LocalTime.parse("18:56:00", TIME_FORMATTER), ninthMeal.getTime());
+        assertEquals(487, (long) ninthMeal.getCalories());
+        // No expected calories for a day in settings, isTotalForTheDayOk defaults to true
+        assertEquals(true, ninthMeal.getIsTotalForTheDayOk());
     }
 }
