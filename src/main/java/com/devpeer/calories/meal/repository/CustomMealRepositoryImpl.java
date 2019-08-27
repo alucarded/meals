@@ -49,7 +49,8 @@ public class CustomMealRepositoryImpl implements CustomMealRepository {
                 Meal.class, CaloriesForDay.class).getMappedResults()
                 .forEach(caloriesForDay -> System.out.println(caloriesForDay.toString()));
 
-        LookupOperation lookup = Aggregation.lookup("CaloriesForDay", "userId", "_id.userId", "caloriesForDay");
+        LookupOperation lookup = Aggregation.lookup(CaloriesForDay.class.getSimpleName(),
+                "userId", "_id.userId", "caloriesForDay");
         UnwindOperation unwindOperation = Aggregation.unwind("caloriesForDay");
         ProjectionOperation projectionOperation = Aggregation.project("date")
                 .and(AggregationSpELExpression.expressionOf("cond(date == caloriesForDay._id.date, 1, 0)"))
@@ -60,6 +61,8 @@ public class CustomMealRepositoryImpl implements CustomMealRepository {
         // Create criteria from filter
         Criteria criteria = MongoCriteriaBuilder.create().build(queryFilter);
         MatchOperation filterMatch = Aggregation.match(criteria);
+        // TODO: join with user settings here
+
         // Pagination with aggregation
         SkipOperation skipOperation = Aggregation.skip(pageable.getPageNumber() * pageable.getPageSize());
         LimitOperation limitOperation = Aggregation.limit(pageable.getPageSize());

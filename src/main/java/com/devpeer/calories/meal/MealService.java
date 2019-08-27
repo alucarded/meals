@@ -75,7 +75,7 @@ public class MealService {
         }
         QueryFilter queryFilter = QueryFilterParser.parse(filter, Meal.class);
         verifyQueryFilter(requestingUser, queryFilter);
-        return mealRepository.findAll(queryFilter, PageRequest.of(page, size));
+        return mealRepository.findAllWithTotalCalories(queryFilter, PageRequest.of(page, size));
     }
 
     private Page<Meal> getMeals(UserDetails requestingUser, int page, int size) {

@@ -45,6 +45,7 @@ public class Meal {
 
     private Integer calories;
 
+    @BsonIgnore
     private Integer totalCalories;
 
 //    private CaloriesForDay caloriesForDay;

@@ -25,6 +25,8 @@ public class UsersRestController {
         this.userRepository = userRepository;
     }
 
+    // TODO: add exception handling and mapping to HTTP failures
+
     @GetMapping("/me")
     public ResponseEntity getCurrentUser(@AuthenticationPrincipal UserDetails userDetails) {
         return ResponseEntity.ok(UserMapper.from(userDetails));
