@@ -1,5 +1,6 @@
 package com.devpeer.calories.meal;
 
+import com.devpeer.calories.core.query.QueryFilter;
 import com.devpeer.calories.meal.model.Meal;
 import com.devpeer.calories.meal.repository.MealRepository;
 import org.junit.Before;
@@ -7,6 +8,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDate;
@@ -106,7 +109,12 @@ public class MealRepositoryTests {
     @Test
     public void testAggregationWorks() {
         // TODO: test properly
-        mealRepository.findAllWithTotalCalories().forEach(
+        QueryFilter queryFilter = new QueryFilter();
+        queryFilter.setOperator(QueryFilter.Operator.EQ);
+        queryFilter.setKey("userId");
+        queryFilter.setValue("admin");
+        PageRequest pageRequest = PageRequest.of(0, 5);
+        mealRepository.findAllWithTotalCalories(queryFilter, pageRequest).forEach(
                 meal -> System.out.println(meal.toString())
         );
     }

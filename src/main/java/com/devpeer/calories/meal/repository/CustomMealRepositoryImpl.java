@@ -40,7 +40,8 @@ public class CustomMealRepositoryImpl implements CustomMealRepository {
     }
 
     @Override
-    public List<Meal> findAllWithTotalCalories() {
+    public Page<Meal> findAllWithTotalCalories(QueryFilter queryFilter, Pageable pageable) {
+        // TODO: recalculate total for the day with every write for userId and date pair
         GroupOperation grouping = Aggregation.group("userId", "date")
                 .sum("calories").as("totalCalories");
         OutOperation outOperation = Aggregation.out(CaloriesForDay.class.getSimpleName());
@@ -56,30 +57,24 @@ public class CustomMealRepositoryImpl implements CustomMealRepository {
                 .andInclude("userId", "time", "text", "calories")
                 .and("caloriesForDay.totalCalories").as("totalCalories");
         MatchOperation matchOperation = Aggregation.match(Criteria.where("matched").is(1));
-        return mongoTemplate.aggregate(
-                Aggregation.newAggregation(lookup, unwindOperation, projectionOperation, matchOperation),
+        // Create criteria from filter
+        Criteria criteria = MongoCriteriaBuilder.create().build(queryFilter);
+        MatchOperation filterMatch = Aggregation.match(criteria);
+        // Pagination with aggregation
+        SkipOperation skipOperation = Aggregation.skip(pageable.getPageNumber() * pageable.getPageSize());
+        LimitOperation limitOperation = Aggregation.limit(pageable.getPageSize());
+        List<Meal> result = mongoTemplate.aggregate(
+                Aggregation.newAggregation(lookup, unwindOperation, projectionOperation, matchOperation, filterMatch,
+                        skipOperation, limitOperation),
                 Meal.class, Meal.class)
                 .getMappedResults();
+        return PageableExecutionUtils.getPage(result, pageable, result::size);
     }
 
     @Override
     public Page<Meal> findAll(QueryFilter queryFilter, Pageable pageable) {
         Criteria criteria = MongoCriteriaBuilder.create().build(queryFilter);
         Query query = new Query(criteria).with(pageable);
-        // TODO: send aggregate and find at once?
-//        GroupOperation grouping = Aggregation.group("userId", "date")
-//                .sum("calories").as("totalCalories");
-//        LookupOperation lookup = Aggregation.lookup("Meal", "_id.userId", "userId", "Meals");
-//        MatchOperation match = Aggregation.match(criteria);
-//        Aggregation aggregation = Aggregation.newAggregation(
-//                Aggregation.group("userId", "date")
-//                        .sum("calories").as("totalCalories"));
-//        aggregation.withOptions(new AggregationOptions())
-//        AggregationResults<CaloriesForDay> aggregationResults =
-//                mongoTemplate.aggregate(
-//                        aggregation,
-//                        Meal.class,
-//                        CaloriesForDay.class);
         List<Meal> list = mongoTemplate.find(query, Meal.class);
         return PageableExecutionUtils.getPage(
                 list,

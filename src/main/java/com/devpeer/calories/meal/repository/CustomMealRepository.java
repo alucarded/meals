@@ -11,7 +11,7 @@ import java.util.List;
 public interface CustomMealRepository {
     Meal update(Meal meal);
 
-    List<Meal> findAllWithTotalCalories();
+    Page<Meal> findAllWithTotalCalories(QueryFilter queryFilter, Pageable pageable);
 
     Page<Meal> findAll(QueryFilter queryFilter, Pageable pageable);
 }
