@@ -28,8 +28,6 @@ public class CustomMealRepositoryImpl implements CustomMealRepository {
         this.mongoTemplate = mongoTemplate;
     }
 
-    // TODO: test this class separately
-
     @Override
     public Meal update(Meal meal) {
         return mongoTemplate.findAndModify(
@@ -82,6 +80,6 @@ public class CustomMealRepositoryImpl implements CustomMealRepository {
         return PageableExecutionUtils.getPage(
                 list,
                 pageable,
-                () -> mongoTemplate.count(query, Meal.class));
+                list::size);
     }
 }
