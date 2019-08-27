@@ -2,6 +2,8 @@ package com.devpeer.calories.meal;
 
 import com.devpeer.calories.meal.model.Meal;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -69,10 +71,9 @@ public class MealsRestController {
     @GetMapping
     public ResponseEntity getMeals(@AuthenticationPrincipal UserDetails userDetails,
                                    @RequestParam(value = "filter", required = false) String filter,
-                                   @RequestParam("page") Integer page,
-                                   @RequestParam("size") Integer size) {
+                                   @PageableDefault(value = Integer.MAX_VALUE) Pageable pageable) {
         try {
-            return ResponseEntity.ok(mealService.getMeals(userDetails, filter, page, size));
+            return ResponseEntity.ok(mealService.getMeals(userDetails, filter, pageable));
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error", e);
         }

@@ -99,7 +99,7 @@ public class MealServiceTests {
         Mockito.when(userDetails.getAuthorities())
                 .thenReturn((Collection) Collections.singleton(Authority.USER));
 
-        mealService.getMeals(userDetails, null, 1, 1);
+        mealService.getMeals(userDetails, null, PageRequest.of(1, 1));
 
         Mockito.verify(mealRepository, Mockito.times(0))
                 .findAll((QueryFilter) null, PageRequest.of(1, 1));
@@ -116,7 +116,7 @@ public class MealServiceTests {
         Mockito.when(userDetails.getAuthorities())
                 .thenReturn((Collection) Collections.singleton(Authority.ADMIN));
 
-        mealService.getMeals(userDetails, null, 1, 1);
+        mealService.getMeals(userDetails, null, PageRequest.of(1, 1));
 
         Mockito.verify(mealRepository, Mockito.times(0))
                 .findAll((QueryFilter) null, PageRequest.of(1, 1));

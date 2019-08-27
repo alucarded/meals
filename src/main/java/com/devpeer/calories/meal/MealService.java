@@ -8,7 +8,6 @@ import com.devpeer.calories.meal.repository.MealRepository;
 import com.devpeer.calories.user.model.Authority;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -69,20 +68,20 @@ public class MealService {
         return mealRepository.findByIdAndUserId(id, requestingUser.getUsername());
     }
 
-    public Page<Meal> getMeals(UserDetails requestingUser, String filter, int page, int size) {
+    public Page<Meal> getMeals(UserDetails requestingUser, String filter, Pageable pageable) {
         if (null == filter) {
-            return getMeals(requestingUser, page, size);
+            return getMeals(requestingUser, pageable);
         }
         QueryFilter queryFilter = QueryFilterParser.parse(filter, Meal.class);
         verifyQueryFilter(requestingUser, queryFilter);
-        return mealRepository.findAllWithTotalCalories(queryFilter, PageRequest.of(page, size));
+        return mealRepository.findAllWithAggregations(queryFilter, pageable);
     }
 
-    private Page<Meal> getMeals(UserDetails requestingUser, int page, int size) {
+    private Page<Meal> getMeals(UserDetails requestingUser, Pageable pageable) {
         if (requestingUser.getAuthorities().contains(Authority.ADMIN)) {
-            return mealRepository.findAll(PageRequest.of(page, size));
+            return mealRepository.findAll(pageable);
         } else if (requestingUser.getAuthorities().contains(Authority.USER)) {
-            return mealRepository.findAllByUserId(requestingUser.getUsername(), PageRequest.of(page, size));
+            return mealRepository.findAllByUserId(requestingUser.getUsername(), pageable);
         } else {
             throw noAuthority();
         }
