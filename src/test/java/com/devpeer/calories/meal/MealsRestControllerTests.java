@@ -7,20 +7,26 @@ import com.devpeer.calories.core.jackson.Jackson;
 import com.devpeer.calories.meal.model.Meal;
 import com.devpeer.calories.meal.repository.MealRepository;
 import com.devpeer.calories.user.UserRepository;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.AdditionalAnswers;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.JUnitRestDocumentation;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.stereotype.Service;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -31,6 +37,7 @@ import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -45,12 +52,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         includeFilters = {@ComponentScan.Filter({Service.class})})
 @ContextConfiguration(classes = {CaloriesApplication.class, JwtTokenProvider.class, CustomUserDetailsService.class})
 @ComponentScan
+@AutoConfigureRestDocs(outputDir = "target/snippets")
 public class MealsRestControllerTests {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss");
 
-    @Autowired
+    @Rule
+    public JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation();
+
     private MockMvc mvc;
 
     @Autowired
@@ -61,6 +71,16 @@ public class MealsRestControllerTests {
 
     @MockBean
     private MealRepository mealRepository;
+
+    @Autowired
+    private WebApplicationContext context;
+
+    @Before
+    public void setUp() {
+        mvc = MockMvcBuilders.webAppContextSetup(this.context)
+                .apply(documentationConfiguration(this.restDocumentation))
+                .build();
+    }
 
     @Test
     @WithMockUser(username = "tom123", authorities = {"USER"})
