@@ -1,7 +1,6 @@
 package com.devpeer.calories.auth.model;
 
 import com.devpeer.calories.core.RegularExpressions;
-import com.sun.org.apache.xerces.internal.impl.xpath.regex.RegularExpression;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
