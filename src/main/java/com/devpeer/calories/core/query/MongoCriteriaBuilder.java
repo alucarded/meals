@@ -14,7 +14,6 @@ public class MongoCriteriaBuilder {
     }
 
     public Criteria build(QueryFilter queryFilter) {
-        // TODO: resolve types ?
         return parseQueryFilter(queryFilter);
     }
 

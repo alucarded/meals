@@ -42,8 +42,7 @@ public class CustomMealRepositoryImpl implements CustomMealRepository {
 
     @Override
     public Page<Meal> findAllWithAggregations(@Nullable QueryFilter queryFilter, Pageable pageable) {
-        // TODO: recalculate total for the day with every write for userId and date pair
-        // TODO: we would benefit here if we use reactive framework...
+        // TODO: recalculate total for the day with every write for userId and date pair ?
         GroupOperation grouping = Aggregation.group("userId", "date")
                 .sum("calories").as("totalCalories");
         OutOperation outOperation = Aggregation.out(CaloriesForDay.class.getSimpleName());

@@ -55,17 +55,6 @@ public class MealService {
         return mealRepository.save(meal);
     }
 
-    public Page<Meal> getMealsForCurrentUser(UserDetails requestingUser, Pageable pageable) {
-        // TODO: filtering
-        return mealRepository.findAllByUserId(requestingUser.getUsername(), pageable);
-    }
-
-    public Page<Meal> getMealsForUser(UserDetails requestingUser, String userId, Pageable pageable) {
-        verifyPermissions(requestingUser, userId);
-        // TODO: filtering
-        return mealRepository.findAllByUserId(userId, pageable);
-    }
-
     public Optional<Meal> getMealById(UserDetails requestingUser, String id) {
         return mealRepository.findByIdAndUserId(id, requestingUser.getUsername());
     }
@@ -138,7 +127,6 @@ public class MealService {
             queryFilter.getChainOperations().forEach(this::verifyQueryFilter);
         }
     }
-
 
     private AccessDeniedException noAuthority() {
         return new AccessDeniedException("No permissions to CRUD meals");

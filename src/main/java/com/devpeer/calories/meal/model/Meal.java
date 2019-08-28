@@ -50,7 +50,6 @@ public class Meal {
      * Extra boolean field set to true, if the total for that day is less than expected number of calories per day,
      * otherwise false.
      */
-    // TODO: populate this field
     @BsonIgnore
     private Boolean isTotalForTheDayOk;
 }

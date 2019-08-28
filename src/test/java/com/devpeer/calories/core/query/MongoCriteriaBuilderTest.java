@@ -51,8 +51,8 @@ public class MongoCriteriaBuilderTest {
         andFilter.setChainOperations(Arrays.asList(eqFilter, gtFilter));
 
         Criteria criteria = MongoCriteriaBuilder.create().build(andFilter);
-        Map<String, Object> queryMap = Jackson.fromJsonToMap(criteria.getCriteriaObject().toJson());
-        System.out.println(criteria.getCriteriaObject().toJson());
-        // TODO: test
+        String criteriaStr = criteria.getCriteriaObject().toJson();
+        assertEquals("{ \"$and\" : [{ \"someInteger\" : 11 }, { \"someDouble\" : { \"$gt\" : 22.5 } }] }",
+                criteriaStr);
     }
 }
