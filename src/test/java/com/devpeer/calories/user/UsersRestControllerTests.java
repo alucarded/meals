@@ -3,7 +3,7 @@ package com.devpeer.calories.user;
 import com.devpeer.calories.CaloriesApplication;
 import com.devpeer.calories.auth.CustomUserDetailsService;
 import com.devpeer.calories.auth.jwt.JwtTokenProvider;
-import com.devpeer.calories.auth.model.RegistrationForm;
+import com.devpeer.calories.meal.model.RegistrationForm;
 import com.devpeer.calories.core.jackson.Jackson;
 import com.devpeer.calories.core.query.QueryFilter;
 import com.devpeer.calories.user.model.Authority;
@@ -145,7 +145,6 @@ public class UsersRestControllerTests {
     // All API users can register
     @Test
     public void givenRegistrationForm_whenRegisterUser_thenReturnUser() throws Exception {
-        // TODO: password length and characters validation
         // TODO: prevent registered user from registering again ?
         RegistrationForm registrationForm = new RegistrationForm("newuser1", "Password!1");
 

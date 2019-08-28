@@ -64,8 +64,7 @@ public class MealsRestController {
      * // TODO: ...or return bad request if he tries to filter by user ID
      *
      * @param userDetails
-     * @param page
-     * @param size
+     * @param pageable
      * @return
      */
     @GetMapping

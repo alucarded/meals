@@ -108,6 +108,17 @@ public class MealServiceTests {
                 .findAllByUserId("username", PageRequest.of(1, 1));
     }
 
+    @Test(expected = AccessDeniedException.class)
+    @SuppressWarnings("unchecked")
+    public void givenUser_whenGetMealsWithUserIdFilter_thenThrow() {
+        UserDetails userDetails = Mockito.mock(UserDetails.class);
+        Mockito.when(userDetails.getUsername()).thenReturn("username");
+        Mockito.when(userDetails.getAuthorities())
+                .thenReturn((Collection) Collections.singleton(Authority.USER));
+
+        mealService.getMeals(userDetails, "(time gt 13:00:00) AND (userId eq someuser1)", PageRequest.of(1, 1));
+    }
+
     @Test
     @SuppressWarnings("unchecked")
     public void givenAdmin_whenGetMealsNoFilter_thenReturnAllMeals() {

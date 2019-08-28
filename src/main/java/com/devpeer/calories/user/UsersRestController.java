@@ -1,6 +1,6 @@
 package com.devpeer.calories.user;
 
-import com.devpeer.calories.auth.model.RegistrationForm;
+import com.devpeer.calories.meal.model.RegistrationForm;
 import com.devpeer.calories.core.query.QueryFilter;
 import com.devpeer.calories.core.query.QueryFilterParser;
 import com.devpeer.calories.user.model.Authority;

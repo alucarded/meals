@@ -1,10 +1,9 @@
-package com.devpeer.calories.auth.model;
+package com.devpeer.calories.meal.model;
 
 import com.devpeer.calories.core.RegularExpressions;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.lang.NonNull;
 
 import javax.validation.constraints.Pattern;
 
@@ -12,7 +11,6 @@ import javax.validation.constraints.Pattern;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RegistrationForm {
-    @NonNull
     @Pattern(regexp = RegularExpressions.USERNAME_REGEXP,
             message = RegularExpressions.USERNAME_REGEXP_DESCRIPTION)
     private String username;

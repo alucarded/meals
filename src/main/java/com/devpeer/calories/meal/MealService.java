@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -72,8 +74,21 @@ public class MealService {
         if (null == filter) {
             return getMeals(requestingUser, pageable);
         }
+        // TODO: use filter as SPEL expression in mongo projection...
         QueryFilter queryFilter = QueryFilterParser.parse(filter, Meal.class);
-        verifyQueryFilter(requestingUser, queryFilter);
+        if (!requestingUser.getAuthorities().contains(Authority.ADMIN)) {
+            // Make sure regular user can get only his entries
+            verifyQueryFilter(queryFilter);
+            QueryFilter currentUserFilter = QueryFilter.builder()
+                    .key(Meal.USER_ID_FIELD_NAME)
+                    .value(requestingUser.getUsername())
+                    .operator(QueryFilter.Operator.EQ)
+                    .build();
+            queryFilter = QueryFilter.builder()
+                    .operator(QueryFilter.Operator.AND)
+                    .chainOperations(Arrays.asList(queryFilter, currentUserFilter))
+                    .build();
+        }
         return mealRepository.findAllWithAggregations(queryFilter, pageable);
     }
 
@@ -115,9 +130,15 @@ public class MealService {
         verifyPermissions(requestingUser, meal.getUserId());
     }
 
-    private void verifyQueryFilter(UserDetails requestingUser, QueryFilter queryFilter) {
-        // TODO
+    private void verifyQueryFilter(QueryFilter queryFilter) {
+        if (Meal.USER_ID_FIELD_NAME.equals(queryFilter.getKey())) {
+            throw new AccessDeniedException("No permission to filter meals by userId");
+        }
+        if (!queryFilter.getChainOperations().isEmpty()) {
+            queryFilter.getChainOperations().forEach(this::verifyQueryFilter);
+        }
     }
+
 
     private AccessDeniedException noAuthority() {
         return new AccessDeniedException("No permissions to CRUD meals");
