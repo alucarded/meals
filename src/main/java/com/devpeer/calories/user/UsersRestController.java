@@ -78,7 +78,6 @@ public class UsersRestController {
     public ResponseEntity upsertUser(@RequestBody User user) {
         // TODO: make sure password is hashed
         User savedUser = userRepository.save(user);
-        savedUser.setPassword(null);
         return ResponseEntity.ok(savedUser);
     }
 
