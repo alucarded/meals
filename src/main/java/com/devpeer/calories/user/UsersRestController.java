@@ -10,19 +10,26 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.Collections;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/v1/users")
 public class UsersRestController {
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UsersRestController(UserRepository userRepository) {
+    public UsersRestController(UserRepository userRepository,
+                               PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     // TODO: add exception handling and mapping to HTTP failures
@@ -37,6 +44,8 @@ public class UsersRestController {
                                             @RequestBody User user) {
         // TODO: add field validations
         user.setAuthorities(Collections.singletonList(Authority.USER));
+        Optional.ofNullable(user.getPassword())
+                .ifPresent(password -> user.setPassword(passwordEncoder.encode(password)));
         return ResponseEntity.ok(userRepository.save(user));
     }
 
@@ -59,10 +68,10 @@ public class UsersRestController {
     }
 
     @PostMapping
-    public ResponseEntity registerUser(@RequestBody RegistrationForm registrationForm) {
+    public ResponseEntity registerUser(@Valid @RequestBody RegistrationForm registrationForm) {
         User user = User.builder()
                 .username(registrationForm.getUsername())
-                .password(registrationForm.getPassword())
+                .password(passwordEncoder.encode(registrationForm.getPassword()))
                 .authorities(Collections.singletonList(Authority.USER))
                 .build();
         return ResponseEntity.ok(UserMapper.from(userRepository.save(user)));
@@ -76,7 +85,10 @@ public class UsersRestController {
      */
     @PutMapping
     public ResponseEntity upsertUser(@RequestBody User user) {
-        // TODO: make sure password is hashed
+        // Always encode password
+        Optional.ofNullable(user.getPassword())
+                .ifPresent(password -> user.setPassword(passwordEncoder.encode(password)));
+
         User savedUser = userRepository.save(user);
         return ResponseEntity.ok(savedUser);
     }

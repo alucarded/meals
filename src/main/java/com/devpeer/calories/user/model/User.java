@@ -1,5 +1,6 @@
 package com.devpeer.calories.user.model;
 
+import com.devpeer.calories.core.RegularExpressions;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -12,6 +13,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -24,11 +26,12 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class User implements UserDetails {
     @Id
-    @NotEmpty
+    @Pattern(regexp = RegularExpressions.USERNAME_REGEXP,
+            message = RegularExpressions.USERNAME_REGEXP_DESCRIPTION)
     private String username;
-    @NotEmpty
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    // TODO: make sure it is hashed
+    @Pattern(regexp = RegularExpressions.PASSWORD_REGEXP,
+            message = RegularExpressions.PASSWORD_REGEXP_DESCRIPTION)
     private String password;
     @Builder.Default
     private List<Authority> authorities = new ArrayList<>();

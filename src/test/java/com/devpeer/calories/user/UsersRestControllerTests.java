@@ -1,22 +1,21 @@
 package com.devpeer.calories.user;
 
 import com.devpeer.calories.CaloriesApplication;
-import com.devpeer.calories.auth.model.RegistrationForm;
 import com.devpeer.calories.auth.CustomUserDetailsService;
 import com.devpeer.calories.auth.jwt.JwtTokenProvider;
+import com.devpeer.calories.auth.model.RegistrationForm;
+import com.devpeer.calories.core.jackson.Jackson;
 import com.devpeer.calories.core.query.QueryFilter;
 import com.devpeer.calories.user.model.Authority;
 import com.devpeer.calories.user.model.User;
-import com.devpeer.calories.user.UserRepository;
-import com.devpeer.calories.core.jackson.Jackson;
-import com.devpeer.calories.user.UsersRestController;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.http.MediaType;
@@ -33,9 +32,11 @@ import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertNotEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -50,6 +51,9 @@ public class UsersRestControllerTests {
 
     @MockBean
     private UserRepository userRepository;
+
+    @Captor
+    ArgumentCaptor<User> userArgumentCaptor;
 
     private static final String TEST_USERNAME = "username";
 
@@ -143,7 +147,7 @@ public class UsersRestControllerTests {
     public void givenRegistrationForm_whenRegisterUser_thenReturnUser() throws Exception {
         // TODO: password length and characters validation
         // TODO: prevent registered user from registering again ?
-        RegistrationForm registrationForm = new RegistrationForm("newuser1", "password");
+        RegistrationForm registrationForm = new RegistrationForm("newuser1", "Password!1");
 
         given(userRepository.save(any())).willReturn(User.builder()
                 .username(registrationForm.getUsername())
@@ -156,7 +160,12 @@ public class UsersRestControllerTests {
                 .andExpect(jsonPath("$.username", is(registrationForm.getUsername())))
                 .andExpect(jsonPath("$.password").doesNotExist())
                 .andExpect(jsonPath("$.authorities[0]", is(Authority.USER.toString())));
+
+        verify(userRepository).save(userArgumentCaptor.capture());
+        assertNotEquals(registrationForm.getPassword(), userArgumentCaptor.getValue().getPassword());
     }
+
+    // TODO: test regexp input validation works
 
     @Test
     @WithMockUser(authorities = {"USER", "MANAGER"})
@@ -164,15 +173,19 @@ public class UsersRestControllerTests {
 
         User returnedUser = User.builder()
                 .username(TEST_USERNAME)
+                .password("password")
                 .authorities(Collections.singletonList(Authority.USER))
                 .build();
 
-        given(userRepository.save(TEST_USER)).willReturn(returnedUser);
+        given(userRepository.save(any())).willReturn(returnedUser);
 
         mvc.perform(put("/v1/users").contentType(MediaType.APPLICATION_JSON).content(Jackson.toJsonUnsafe(TEST_USER)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.username", is(TEST_USER.getUsername())))
                 .andExpect(jsonPath("$.password").doesNotExist());
+
+        verify(userRepository).save(userArgumentCaptor.capture());
+        assertNotEquals(returnedUser.getPassword(), userArgumentCaptor.getValue().getPassword());
     }
 
     @Test
@@ -184,7 +197,7 @@ public class UsersRestControllerTests {
                 .authorities(Collections.singletonList(Authority.USER))
                 .build();
 
-        given(userRepository.save(TEST_USER)).willReturn(returnedUser);
+        given(userRepository.save(any())).willReturn(returnedUser);
 
         mvc.perform(put("/v1/users").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isForbidden())
@@ -234,11 +247,14 @@ public class UsersRestControllerTests {
         // TODO: integration tests for password change ?
         updatedUser.setUsername("newusername");
 
-        given(userRepository.save(updatedUser)).willReturn(updatedUser);
+        given(userRepository.save(any())).willReturn(updatedUser);
 
         mvc.perform(put("/v1/users/me").contentType(MediaType.APPLICATION_JSON).content(Jackson.toJsonUnsafe(updatedUser)))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().string(Jackson.toJsonUnsafe(updatedUser)));
+
+        verify(userRepository).save(userArgumentCaptor.capture());
+        assertNotEquals(updatedUser.getPassword(), userArgumentCaptor.getValue().getPassword());
     }
 
     @Test
