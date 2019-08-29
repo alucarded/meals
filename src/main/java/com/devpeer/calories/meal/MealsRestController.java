@@ -10,6 +10,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
@@ -41,6 +42,10 @@ public class MealsRestController {
             return ResponseEntity.created(URI.create("/v1/meals/" + addedMeal.getId())).body(addedMeal);
         } catch (AccessDeniedException e) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage(), e);
+            // TODO: better specialize exception (specific to Meal service domain logic), instead of using the generic client one
+        } catch (WebClientResponseException.NotFound e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Could not find number of calories for given text," +
+                    "please provide number of calories or change text", e);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error", e);
         }
