@@ -19,12 +19,11 @@ import java.util.Date;
 
 @Component
 public class JwtTokenProvider {
-    // TODO: proper management for secret key
     @Value("${security.jwt.token.secret-key:secret}")
     private String secretKey = "secret";
 
-    @Value("${security.jwt.token.expire-length:3600000}")
-    private long validityInMilliseconds = 3600000; // 1h
+    @Value("${security.jwt.token.expire-length:900000}")
+    private long validityInMilliseconds = 900000; // 15 min
 
     private final UserDetailsService userDetailsService;
 
