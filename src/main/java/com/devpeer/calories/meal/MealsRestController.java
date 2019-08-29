@@ -55,7 +55,7 @@ public class MealsRestController {
     public ResponseEntity getMealById(@AuthenticationPrincipal UserDetails userDetails,
                                       @PathVariable("id") String id) {
         try {
-            return ResponseEntity.ok(mealService.getMealById(userDetails, id));
+            return ResponseEntity.of(mealService.getMealById(userDetails, id));
         } catch (AccessDeniedException e) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage(), e);
         } catch (Exception e) {
@@ -94,7 +94,7 @@ public class MealsRestController {
     public ResponseEntity updateMeal(@AuthenticationPrincipal UserDetails userDetails,
                                      @RequestBody Meal meal) {
         try {
-            return ResponseEntity.ok(mealService.updateMeal(userDetails, meal));
+            return ResponseEntity.ok(mealService.replaceMeal(userDetails, meal));
         } catch (AccessDeniedException e) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage(), e);
         } catch (Exception e) {

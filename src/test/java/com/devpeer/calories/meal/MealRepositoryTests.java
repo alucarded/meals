@@ -1,6 +1,5 @@
 package com.devpeer.calories.meal;
 
-import com.devpeer.calories.core.query.QueryFilter;
 import com.devpeer.calories.meal.model.Meal;
 import com.devpeer.calories.meal.repository.MealRepository;
 import com.devpeer.calories.settings.UserSettingsRepository;
@@ -147,5 +146,17 @@ public class MealRepositoryTests {
         assertEquals(487, (long) ninthMeal.getCalories());
         // No expected calories for a day in settings, isTotalForTheDayOk defaults to true
         assertEquals(true, ninthMeal.getIsTotalForTheDayOk());
+    }
+
+    @Test
+    public void testReplaceMeal() {
+        Meal replacedMeal = Meal.builder()
+                .id("1")
+                .userId("admin")
+                .date(LocalDate.parse("2019-06-23", DATE_FORMATTER))
+                .text("some replaced text")
+                .calories(120)
+                .build();
+        assertEquals(replacedMeal, mealRepository.replaceByIdAndUserId(replacedMeal));
     }
 }

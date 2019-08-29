@@ -12,13 +12,13 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class MealServiceTests {
@@ -71,8 +71,19 @@ public class MealServiceTests {
     }
 
     @Test
-    public void givenMeals_whenGetMeals_thenReturnMeals() {
+    public void givenRegularUser_whenGetMeal_thenReturnMealByIdAndUserId() {
+        UserDetails userDetails = Mockito.mock(UserDetails.class);
+        Mockito.when(userDetails.getUsername()).thenReturn("username");
+        Mockito.when(userDetails.getAuthorities())
+                .thenReturn((Collection) Collections.singleton(Authority.USER));
 
+        mealService.getMealById(userDetails, "someid");
+
+        Mockito.verify(mealRepository, Mockito.times(0))
+                .findById(any());
+
+        Mockito.verify(mealRepository)
+                .findByIdAndUserId("someid","username");
     }
 
     @SuppressWarnings("unchecked")
@@ -82,8 +93,8 @@ public class MealServiceTests {
         Mockito.when(userDetails.getAuthorities())
                 .thenReturn((Collection) Collections.singleton(authority));
 
-        mealService.updateMeal(userDetails, TEST_MEAL);
-        Mockito.verify(mealRepository).update(mealArgumentCaptor.capture());
+        mealService.replaceMeal(userDetails, TEST_MEAL);
+        Mockito.verify(mealRepository).replaceByIdAndUserId(mealArgumentCaptor.capture());
         assertEquals("user123", mealArgumentCaptor.getValue().getUserId());
         assertEquals("id123", mealArgumentCaptor.getValue().getId());
         assertEquals(TEST_DATE, mealArgumentCaptor.getValue().getDate());

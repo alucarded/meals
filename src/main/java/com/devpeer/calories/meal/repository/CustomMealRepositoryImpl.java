@@ -5,11 +5,13 @@ import com.devpeer.calories.core.query.MongoCriteriaBuilder;
 import com.devpeer.calories.core.query.QueryFilter;
 import com.devpeer.calories.meal.model.CaloriesForDay;
 import com.devpeer.calories.meal.model.Meal;
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.FindAndModifyOptions;
+import org.springframework.data.mongodb.core.FindAndReplaceOptions;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.*;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -21,6 +23,7 @@ import org.springframework.lang.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public class CustomMealRepositoryImpl implements CustomMealRepository {
 
@@ -32,12 +35,11 @@ public class CustomMealRepositoryImpl implements CustomMealRepository {
     }
 
     @Override
-    public Meal update(Meal meal) {
-        return mongoTemplate.findAndModify(
+    public Meal replaceByIdAndUserId(Meal meal) {
+        return mongoTemplate.findAndReplace(
                 Query.query(Criteria.where("id").is(meal.getId()).and("userId").is(meal.getUserId())),
-                Update.fromDocument(new Document(Jackson.toObjectMap(meal)), Meal.ID_FIELD_NAME, Meal.USER_ID_FIELD_NAME),
-                new FindAndModifyOptions().returnNew(true),
-                Meal.class);
+                meal,
+                new FindAndReplaceOptions().returnNew());
     }
 
     @Override

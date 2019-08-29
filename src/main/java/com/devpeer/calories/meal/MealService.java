@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
@@ -56,6 +55,9 @@ public class MealService {
     }
 
     public Optional<Meal> getMealById(UserDetails requestingUser, String id) {
+        if (requestingUser.getAuthorities().contains(Authority.ADMIN)) {
+            return mealRepository.findById(id);
+        }
         return mealRepository.findByIdAndUserId(id, requestingUser.getUsername());
     }
 
@@ -91,13 +93,16 @@ public class MealService {
         }
     }
 
-    public Meal updateMeal(UserDetails requestingUser, Meal meal) {
+    public Meal replaceMeal(UserDetails requestingUser, Meal meal) {
         verifyPermissions(requestingUser, meal);
-        return mealRepository.update(meal);
+        return mealRepository.replaceByIdAndUserId(meal);
     }
 
-    // TODO: does it throw if object does not exist?
     public void deleteMeal(UserDetails requestingUser, String id) {
+        if (requestingUser.getAuthorities().contains(Authority.ADMIN)) {
+            mealRepository.deleteById(id);
+            return;
+        }
         mealRepository.deleteByIdAndUserId(id, requestingUser.getUsername());
     }
 

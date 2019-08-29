@@ -10,7 +10,7 @@ import org.springframework.lang.Nullable;
 import java.util.List;
 
 public interface CustomMealRepository {
-    Meal update(Meal meal);
+    Meal replaceByIdAndUserId(Meal meal);
 
     Page<Meal> findAllWithAggregations(@Nullable QueryFilter queryFilter, Pageable pageable);
 
