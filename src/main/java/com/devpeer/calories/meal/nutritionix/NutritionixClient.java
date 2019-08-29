@@ -3,6 +3,7 @@ package com.devpeer.calories.meal.nutritionix;
 import com.devpeer.calories.meal.nutritionix.model.Food;
 import com.devpeer.calories.meal.nutritionix.model.NutritionsRequest;
 import com.devpeer.calories.meal.nutritionix.model.NutritionsResponse;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -16,6 +17,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Component
+@NoArgsConstructor
 public class NutritionixClient {
 
     private static final String API_VERSION = "v2";
@@ -27,9 +29,10 @@ public class NutritionixClient {
     @Value("${security.keys.nutritionix.app-key}")
     private String appKey;
 
-    private final WebClient webClient;
+    private WebClient webClient;
 
-    public NutritionixClient() {
+    @PostConstruct
+    public void init() {
         webClient = WebClient.builder()
                 .baseUrl("https://trackapi.nutritionix.com/" + API_VERSION)
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
@@ -38,7 +41,7 @@ public class NutritionixClient {
                 .build();
     }
 
-    public List<Food> getFoods(String text) {
+    List<Food> getFoods(String text) {
         return webClient
                 .post()
                 .uri("/natural/nutrients")
