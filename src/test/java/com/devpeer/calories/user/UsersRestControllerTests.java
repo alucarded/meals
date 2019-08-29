@@ -155,7 +155,7 @@ public class UsersRestControllerTests {
                 .build());
 
         mvc.perform(post("/v1/users").contentType(MediaType.APPLICATION_JSON).content(Jackson.toJsonUnsafe(registrationForm)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.username", is(registrationForm.getUsername())))
                 .andExpect(jsonPath("$.password").doesNotExist())
                 .andExpect(jsonPath("$.authorities[0]", is(Authority.USER.toString())));
@@ -245,6 +245,7 @@ public class UsersRestControllerTests {
         // TODO: should we allow username edit?
         // TODO: integration tests for password change ?
         updatedUser.setUsername("newusername");
+        updatedUser.setAuthorities(null);
 
         given(userRepository.save(any())).willReturn(updatedUser);
 

@@ -38,7 +38,7 @@ public class MealsRestController {
         try {
             Meal addedMeal = mealService.addMeal(userDetails, meal);
             // TODO: we could respond with full URI in location header?
-            return ResponseEntity.created(URI.create("/vi/meals/" + addedMeal.getId())).body(addedMeal);
+            return ResponseEntity.created(URI.create("/v1/meals/" + addedMeal.getId())).body(addedMeal);
         } catch (AccessDeniedException e) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage(), e);
         } catch (Exception e) {
