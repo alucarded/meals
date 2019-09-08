@@ -45,7 +45,7 @@ public class UsersRestController {
         try {
             return ResponseEntity.status(HttpStatus.OK)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .body(UserMapper.from(userDetails));
+                    .body(userDetails);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error", e);
         }
@@ -114,7 +114,7 @@ public class UsersRestController {
                     .build();
             return ResponseEntity.created(URI.create("/v1/users/" + registrationForm.getUsername()))
                     .contentType(MediaType.APPLICATION_JSON)
-                    .body(UserMapper.from(userRepository.save(user)));
+                    .body(userRepository.save(user));
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error", e);
         }
