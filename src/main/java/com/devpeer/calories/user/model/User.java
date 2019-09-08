@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,7 +26,8 @@ import java.util.List;
 @Document
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class User implements UserDetails {
-    @Id
+    //@Id
+    @Indexed(unique = true)
     @Pattern(regexp = RegularExpressions.USERNAME_REGEXP,
             message = RegularExpressions.USERNAME_REGEXP_DESCRIPTION)
     private String username;
