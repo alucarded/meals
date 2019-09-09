@@ -3,9 +3,9 @@ package com.devpeer.calories.user;
 import com.devpeer.calories.CaloriesApplication;
 import com.devpeer.calories.auth.CustomUserDetailsService;
 import com.devpeer.calories.auth.jwt.JwtTokenProvider;
-import com.devpeer.calories.meal.model.RegistrationForm;
 import com.devpeer.calories.core.jackson.Jackson;
 import com.devpeer.calories.core.query.QueryFilter;
+import com.devpeer.calories.meal.model.RegistrationForm;
 import com.devpeer.calories.user.model.Authority;
 import com.devpeer.calories.user.model.User;
 import org.junit.Test;
@@ -13,6 +13,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
@@ -37,6 +38,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.verify;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -44,6 +46,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @WebMvcTest(value = {UsersRestController.class})
 @ContextConfiguration(classes = {CaloriesApplication.class, JwtTokenProvider.class, CustomUserDetailsService.class})
+@AutoConfigureRestDocs
 public class UsersRestControllerTests {
 
     @Autowired
@@ -78,7 +81,8 @@ public class UsersRestControllerTests {
                 .andExpect(jsonPath("$.content[0].username", is(TEST_USERNAME)))
                 .andExpect(jsonPath("$.content[0].password").doesNotExist())
                 .andExpect(jsonPath("$.content[0].authorities", hasSize(1)))
-                .andExpect(jsonPath("$.content[0].authorities[0]", is(Authority.USER.toString())));
+                .andExpect(jsonPath("$.content[0].authorities[0]", is(Authority.USER.toString())))
+                .andDo(document("users-pagination"));
     }
 
     @Test
