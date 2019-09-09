@@ -1,0 +1,4 @@
+[[authenticate]]
+=== Find all users
+
+include::success.adoc[]
