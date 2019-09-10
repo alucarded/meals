@@ -1,5 +1,5 @@
 ## Meals
-REST API for application used to track meals and their calories
+REST API for application used to track meals of a user and their calories
 
 ## Motivation
 This is a showcase project.
