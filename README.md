@@ -23,7 +23,7 @@ mvn install
 
 ## API Reference
 
-TBD
+TBD using Spring REST Docs and Asciidoctor
 
 ## Tests
 ```sh
