@@ -5,9 +5,9 @@ REST API for application used to track meals of a user and their calories
 This is a showcase project.
 
 ## Tech/framework used
-Java 8
-Spring Boot
-MongoDB
+* Java 8
+* Spring Boot
+* MongoDB
 
 <b>Built with</b>
 - Maven
