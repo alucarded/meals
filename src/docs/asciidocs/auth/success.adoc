@@ -1,7 +1,0 @@
-[[auth_signin_success]]
-==== Successful call
-When making a successfull call to this API endpoint, the following request parameters and body can be expected.
-
-[[auth_signin_success_request]]
-===== Request
-include::{snippets}/signin-example/http-request.adoc[]

@@ -1,4 +1,4 @@
 [[authenticate]]
-=== Find all users
+=== Authentication API
 
-include::success.adoc[]
+include::signin.adoc[]

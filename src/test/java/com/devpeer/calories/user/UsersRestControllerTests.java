@@ -82,7 +82,7 @@ public class UsersRestControllerTests {
                 .andExpect(jsonPath("$.content[0].password").doesNotExist())
                 .andExpect(jsonPath("$.content[0].authorities", hasSize(1)))
                 .andExpect(jsonPath("$.content[0].authorities[0]", is(Authority.USER.toString())))
-                .andDo(document("users-pagination"));
+                .andDo(document("users-get-with-pagination"));
     }
 
     @Test
@@ -104,7 +104,8 @@ public class UsersRestControllerTests {
                 .andExpect(jsonPath("$.content[0].username", is(TEST_USERNAME)))
                 .andExpect(jsonPath("$.content[0].password").doesNotExist())
                 .andExpect(jsonPath("$.content[0].authorities", hasSize(1)))
-                .andExpect(jsonPath("$.content[0].authorities[0]", is(Authority.USER.toString())));
+                .andExpect(jsonPath("$.content[0].authorities[0]", is(Authority.USER.toString())))
+                .andDo(document("users-get-with-filter"));
     }
 
     @Test
@@ -129,7 +130,8 @@ public class UsersRestControllerTests {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.username", is(TEST_USER.getUsername())))
                 .andExpect(jsonPath("$.password").doesNotExist())
-                .andExpect(jsonPath("$.authorities[0]", is(Authority.USER.toString())));
+                .andExpect(jsonPath("$.authorities[0]", is(Authority.USER.toString())))
+                .andDo(document("users-get-by-id"));
 
         mvc.perform(get("/v1/users/qwerty").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
@@ -162,7 +164,8 @@ public class UsersRestControllerTests {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.username", is(registrationForm.getUsername())))
                 .andExpect(jsonPath("$.password").doesNotExist())
-                .andExpect(jsonPath("$.authorities[0]", is(Authority.USER.toString())));
+                .andExpect(jsonPath("$.authorities[0]", is(Authority.USER.toString())))
+                .andDo(document("users-registration"));
 
         verify(userRepository).save(userArgumentCaptor.capture());
         assertNotEquals(registrationForm.getPassword(), userArgumentCaptor.getValue().getPassword());
@@ -185,7 +188,8 @@ public class UsersRestControllerTests {
         mvc.perform(put("/v1/users").contentType(MediaType.APPLICATION_JSON).content(Jackson.toJsonUnsafe(TEST_USER)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.username", is(TEST_USER.getUsername())))
-                .andExpect(jsonPath("$.password").doesNotExist());
+                .andExpect(jsonPath("$.password").doesNotExist())
+                .andDo(document("users-upsert"));
 
         verify(userRepository).save(userArgumentCaptor.capture());
         assertNotEquals(returnedUser.getPassword(), userArgumentCaptor.getValue().getPassword());
@@ -211,7 +215,8 @@ public class UsersRestControllerTests {
     @WithMockUser(authorities = {"USER", "MANAGER"})
     public void givenUserId_whenDeleteUserById_thenReturnNoContent() throws Exception {
         mvc.perform(delete("/v1/users/123").contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isNoContent())
+                .andDo(document("users-delete-by-id"));
     }
 
     @Test
@@ -230,7 +235,8 @@ public class UsersRestControllerTests {
     public void whenGetCurrentUser_thenReturnUserInfo() throws Exception {
         mvc.perform(get("/v1/users/me").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.username", is("username")));
+                .andExpect(jsonPath("$.username", is("username")))
+                .andDo(document("users-get-current"));
     }
 
     @Test
@@ -255,7 +261,8 @@ public class UsersRestControllerTests {
 
         mvc.perform(put("/v1/users/me").contentType(MediaType.APPLICATION_JSON).content(Jackson.toJsonUnsafe(updatedUser)))
                 .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string(Jackson.toJsonUnsafe(updatedUser)));
+                .andExpect(MockMvcResultMatchers.content().string(Jackson.toJsonUnsafe(updatedUser)))
+                .andDo(document("users-put-current"));
 
         verify(userRepository).save(userArgumentCaptor.capture());
         assertNotEquals(updatedUser.getPassword(), userArgumentCaptor.getValue().getPassword());
@@ -276,7 +283,8 @@ public class UsersRestControllerTests {
     @WithMockUser(username = "user123", authorities = {"USER"})
     public void whenDeleteCurrentUser_thenReturnNoContent() throws Exception {
         mvc.perform(delete("/v1/users/me").contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isNoContent())
+                .andDo(document("users-delete-current"));
         then(userRepository).should().deleteById("user123");
     }
 

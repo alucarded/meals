@@ -1,0 +1,4 @@
+[[meals]]
+=== Meals API
+
+include::get.adoc[]

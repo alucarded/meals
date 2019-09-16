@@ -1,0 +1,7 @@
+[[users]]
+=== Users API
+
+include::get.adoc[]
+include::post.adoc[]
+include::put.adoc[]
+include::delete.adoc[]

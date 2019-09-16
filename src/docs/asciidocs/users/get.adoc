@@ -1,0 +1,6 @@
+[[users_get_request]]
+===== GET
+include::{snippets}/users-get-with-pagination/http-request.adoc[]
+include::{snippets}/users-get-with-filter/http-request.adoc[]
+include::{snippets}/users-get-by-id/http-request.adoc[]
+include::{snippets}/users-get-current/http-request.adoc[]

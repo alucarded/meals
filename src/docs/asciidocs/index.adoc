@@ -4,8 +4,12 @@
 :toclevels: 3
 :page-layout: docs
 
-= Authentication API
+= Meals Documentation
 
 [[examples]]
 == Examples
+Below are auto-generated examples (from tests) of successful HTTP requests made to the APIs.
+
+include::meals/index.adoc[]
+include::users/index.adoc[]
 include::auth/index.adoc[]

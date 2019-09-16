@@ -1,0 +1,4 @@
+[[users_delete_request]]
+===== DELETE
+include::{snippets}/users-delete-by-id/http-request.adoc[]
+include::{snippets}/users-delete-current/http-request.adoc[]

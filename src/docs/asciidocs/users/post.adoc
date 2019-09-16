@@ -1,0 +1,3 @@
+[[users_post_request]]
+===== POST
+include::{snippets}/users-registration/http-request.adoc[]

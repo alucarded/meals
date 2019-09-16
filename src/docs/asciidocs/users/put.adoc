@@ -1,0 +1,4 @@
+[[users_put_request]]
+===== PUT
+include::{snippets}/users-upsert/http-request.adoc[]
+include::{snippets}/users-put-current/http-request.adoc[]
