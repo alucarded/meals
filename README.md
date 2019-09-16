@@ -21,9 +21,10 @@ This is a showcase project.
 mvn install
 ```
 
-## API Reference
+## Documentation
 
-TBD using Spring REST Docs and Asciidoctor
+Documentation is auto-generated upon installation using Spring REST Docs and Asciidoctor in **target/generated-docs/index.html**
+
 
 ## Tests
 ```sh
