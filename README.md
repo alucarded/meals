@@ -14,7 +14,7 @@ This is a showcase project.
 
 ## Features
 * [custom query filter parser with field type resolution from provided class](https://github.com/alucarded/meals/tree/master/src/main/java/com/devpeer/calories/core/query)
-* [https://github.com/alucarded/meals/blob/master/src/main/java/com/devpeer/calories/meal/MealsRestController.java#L76](filtering and pagination for endpoints returning multiple elements)
+* [filtering and pagination for endpoints returning multiple elements](https://github.com/alucarded/meals/blob/master/src/main/java/com/devpeer/calories/meal/MealsRestController.java#L76)
 
 ## Installation
 ```sh
